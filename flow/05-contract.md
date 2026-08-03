@@ -51,6 +51,11 @@ Function/—/Access(=none)/Args/Return. The shared column below is "Access/Effec
 | Package/layout surface | `crawler`, `schemas`, `tests/fixtures`, `data/raw`, `data/normalized`, `data/kb` | Importing `crawler` is read-only; later pipeline stages write only below configured `data` root | Repository checkout or installed `crawler` package | Planned module boundaries import without side effects; tracked markers preserve empty non-package directories. |
 | Documentation surface | `README.md` | Read-only | UTF-8 Markdown | Contains project purpose, scope/non-goals, Python requirement, install, CLI, quality commands, configuration, data layout, and source-trust summary. |
 | Repository hygiene | `.gitignore` | Controls Git tracking only | Local virtualenvs, `.env`, Python/tool caches, logs, build artifacts, IDE files, and generated data | Those local/generated paths remain untracked; `.env.example`, source, tests, configs, docs, and explicit data-directory markers remain trackable. |
+| Library models | `crawler.models` | Import and validation are read-only; no network or filesystem effects | Keyword data for `VersionRecord`, `AdvisoryRecord`, `PatchRecord`, `SecurityPatternRecord`, `KBDocumentRecord`, or `ProvenanceRecord`; strict nested shared shapes | Frozen Pydantic model; undeclared fields, naive timestamps, malformed digests, and invalid enums raise validation errors; `model_dump(mode="json")` yields JSON-compatible values. |
+| Stable-ID function | `crawler.utils.hashing.stable_record_id` | Pure; no I/O, randomness, clock, or environment access | `record_type: str`; `identity: Mapping[str, object]` containing bounded, explicit identity values | `<record-type>:<64 lowercase hex SHA-256>` computed from canonical UTF-8 JSON; mapping key order and set/frozenset iteration order do not affect the result; unsupported/non-finite values raise `TypeError`/`ValueError`. |
+| Schema exporter | `crawler.exporters.schemas.export_json_schemas` | Writes only the named output directory; creates it if absent | `output_directory: pathlib.Path` | Mapping from six schema filenames to written paths; UTF-8, sorted, indented Draft 2020-12 schemas generated from the six public models. Existing matching files are deterministically replaced. |
+| Checked-in schemas | `schemas/*.schema.json` | Read-only for consumers | Serialized JSON object for the matching model | Six Draft 2020-12 schemas (`version`, `advisory`, `patch`, `security_pattern`, `kb_document`, `provenance`) that validate matching model output. |
+| Data-contract documentation | `docs/data_contracts.md` | Read-only | UTF-8 Markdown | Records canonical advisory identity, dates, null/empty behavior, list ordering, version ranges, provenance, schema compatibility, and ID derivation policy. |
 
 ## Shared shapes (objects used by multiple interfaces)
 
@@ -94,6 +99,37 @@ Urllib3Config:
     max_retries: 4
     cache_enabled: true
     respect_rate_limits: true
+
+NormalizedRecordBase:
+  schema_version: "1.0"
+  record_type: enum fixed by concrete model
+  record_id: non-empty stable identifier
+  package: {name: str, ecosystem: str, purl: str}
+  provenance: non-empty list[ProvenanceRecord]
+
+ProvenanceRecord:
+  source_type: non-empty str
+  source_id: non-empty str
+  retrieved_at: timezone-aware datetime serialized as ISO-8601
+  raw_sha256: 64 lowercase hexadecimal characters
+  extractor_version: non-empty str
+
+VersionRange:
+  raw: str | null
+  events: ordered list[{introduced|fixed|last_affected|limit: str}]
+  resolved: sorted unique list[str]
+
+Confidence:
+  score: float in [0, 1]
+  rationale: sorted unique list[str]
+
+SourcePriority:
+  tier_1_authoritative | tier_2_contextual | tier_3_enrichment
+
+DetectionType:
+  version_only | version_api | version_api_configuration |
+  version_api_dataflow | version_api_configuration_dataflow |
+  security_assumption_mismatch
 ```
 
 ## Feature → interface map
@@ -108,3 +144,8 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR5 → quality commands.
 - FR6 → documentation surface plus the install, CLI, configuration, and quality interfaces it documents.
 - FR7 → repository hygiene, environment template, and package/layout surface.
+- FR8 → library models and shared shapes.
+- FR9 → schema exporter and checked-in schemas.
+- FR10 → stable-ID function.
+- FR11 → library models, stable-ID function, and checked-in schemas.
+- FR12 → data-contract documentation.

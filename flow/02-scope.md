@@ -46,7 +46,8 @@ When a C feature is the real need, three honest paths:
 
 ## Time budget
 
-One focused implementation session for Phase 0; no unverified delivery-hour estimate is assumed for later phases.
+One focused implementation session per approved phase. Phase 0 is complete; this
+amendment authorizes one focused implementation session for Phase 1 data contracts.
 
 ## Features in v1 (each with impact AND grade)
 
@@ -57,6 +58,10 @@ One focused implementation session for Phase 0; no unverified delivery-hour esti
 - Offline bootstrap tests plus Ruff and Mypy configuration — impact H (provides the acceptance gate and protects later deterministic/security-sensitive work) — grade A (standard tooling and smoke tests).
 - Initial README with setup, commands, project boundaries, source priorities, and development checks — impact M (reduces onboarding and operational ambiguity) — grade A (documentation).
 - Repository hygiene via `.gitignore` and tracked empty output-directory markers — impact M (prevents credentials, environments, caches, and generated crawl data from leaking into commits) — grade A (configuration).
+- Typed Phase 1 domain records, shared enums, confidence and provenance shapes — impact H (every crawler and SAST consumer needs one explicit, validated vocabulary) — grade B (multiple related data contracts with cross-field invariants).
+- Checked-in Draft 2020-12 JSON Schemas generated from the typed records — impact H (Python and non-Python consumers must validate the same wire format) — grade B (schema generation plus drift tests).
+- Deterministic record identifiers and set-like list normalization — impact H (incremental crawls need stable deduplication and reproducible output) — grade A (canonical JSON hashing and validators).
+- Data-contract decision document covering identifiers, dates, nulls, ordering, version ranges, provenance, and schema versioning — impact M (prevents later source adapters from inventing incompatible conventions) — grade A (bounded architecture documentation).
 
 ## Suggested features (impact-first — proposed, not decided)
 
@@ -72,7 +77,7 @@ decision.
 
 ## Cut list (NOT in v1 — deferred, not deleted)
 
-- Domain models and JSON Schemas — deferred to Phase 1 so contracts are designed deliberately rather than hidden in bootstrap code.
+- Domain models and JSON Schemas were deferred from Phase 0 and are now included in the approved Phase 1 amendment.
 - HTTP, cache, retry, and raw storage — deferred to Phase 2.
 - Live PyPI, GitHub, OSV, GHSA, and NVD crawling — deferred to Phases 3–5.
 - Range and alias resolution, patch/test enrichment, security patterns, KB documents, statistics, and real query behavior — deferred to Phases 6–13.
@@ -80,4 +85,6 @@ decision.
 
 ## Decision
 
-GO — Phase 0 is a bounded all-A bootstrap that establishes the install, command, configuration, test, and repository seams required by every later phase without implementing crawler semantics early.
+GO — Phase 0 established the install and repository seams. Phase 1 is a bounded
+contract-first extension that stabilizes deterministic record shapes before any source
+adapter or crawler behavior is implemented.
