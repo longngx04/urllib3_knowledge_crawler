@@ -200,18 +200,18 @@ Stabilize data contracts before implementing multiple crawlers.
 
 ### Tasks
 
-- [ ] Define `VersionRecord`.
-- [ ] Define `AdvisoryRecord`.
-- [ ] Define `PatchRecord`.
-- [ ] Define `SecurityPatternRecord`.
-- [ ] Define `KBDocumentRecord`.
-- [ ] Define `ProvenanceRecord`.
-- [ ] Define source-priority enum.
-- [ ] Define detection-type enum.
-- [ ] Define confidence model.
-- [ ] Create matching JSON Schemas.
-- [ ] Add stable record-ID functions.
-- [ ] Add serialization tests.
+- [x] Define `VersionRecord`.
+- [x] Define `AdvisoryRecord`.
+- [x] Define `PatchRecord`.
+- [x] Define `SecurityPatternRecord`.
+- [x] Define `KBDocumentRecord`.
+- [x] Define `ProvenanceRecord`.
+- [x] Define source-priority enum.
+- [x] Define detection-type enum.
+- [x] Define confidence model.
+- [x] Create matching JSON Schemas.
+- [x] Add stable record-ID functions.
+- [x] Add serialization tests.
 
 ### Required Design Decisions
 

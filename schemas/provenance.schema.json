@@ -1,0 +1,42 @@
+{
+  "$id": "urn:urllib3-knowledge-crawler:schema:1.0:provenance",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Trace from a normalized claim to one preserved raw source.",
+  "properties": {
+    "extractor_version": {
+      "minLength": 1,
+      "title": "Extractor Version",
+      "type": "string"
+    },
+    "raw_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Raw Sha256",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "format": "date-time",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "source_id": {
+      "minLength": 1,
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_type": {
+      "minLength": 1,
+      "title": "Source Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_type",
+    "source_id",
+    "retrieved_at",
+    "raw_sha256",
+    "extractor_version"
+  ],
+  "title": "ProvenanceRecord",
+  "type": "object"
+}

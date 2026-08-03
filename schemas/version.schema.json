@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "DistributionArtifact": {
+      "additionalProperties": false,
+      "description": "Published distribution metadata for a package version.",
+      "properties": {
+        "filename": {
+          "minLength": 1,
+          "title": "Filename",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sha256"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "filename"
+      ],
+      "title": "DistributionArtifact",
+      "type": "object"
+    },
+    "PackageRecord": {
+      "additionalProperties": false,
+      "description": "Package identity embedded in normalized records.",
+      "properties": {
+        "ecosystem": {
+          "minLength": 1,
+          "title": "Ecosystem",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "purl": {
+          "minLength": 1,
+          "title": "Purl",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "ecosystem",
+        "purl"
+      ],
+      "title": "PackageRecord",
+      "type": "object"
+    },
+    "ProvenanceRecord": {
+      "additionalProperties": false,
+      "description": "Trace from a normalized claim to one preserved raw source.",
+      "properties": {
+        "extractor_version": {
+          "minLength": 1,
+          "title": "Extractor Version",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "retrieved_at",
+        "raw_sha256",
+        "extractor_version"
+      ],
+      "title": "ProvenanceRecord",
+      "type": "object"
+    }
+  },
+  "$id": "urn:urllib3-knowledge-crawler:schema:1.0:version",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Normalized package release and repository-correlation metadata.",
+  "properties": {
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/DistributionArtifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "commit_sha": {
+      "anyOf": [
+        {
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Commit Sha"
+    },
+    "git_tag": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Git Tag"
+    },
+    "is_prerelease": {
+      "title": "Is Prerelease",
+      "type": "boolean"
+    },
+    "is_yanked": {
+      "title": "Is Yanked",
+      "type": "boolean"
+    },
+    "normalized_version": {
+      "minLength": 1,
+      "title": "Normalized Version",
+      "type": "string"
+    },
+    "package": {
+      "$ref": "#/$defs/PackageRecord"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceRecord"
+      },
+      "minItems": 1,
+      "title": "Provenance",
+      "type": "array"
+    },
+    "raw_version": {
+      "minLength": 1,
+      "title": "Raw Version",
+      "type": "string"
+    },
+    "record_id": {
+      "pattern": "^[a-z][a-z0-9_]*:[0-9a-f]{64}$",
+      "title": "Record Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "version",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "release_date": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Release Date"
+    },
+    "requires_python": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Requires Python"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "support_branch": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Support Branch"
+    },
+    "support_status": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Support Status"
+    },
+    "yanked_reason": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Yanked Reason"
+    }
+  },
+  "required": [
+    "schema_version",
+    "record_id",
+    "package",
+    "provenance",
+    "record_type",
+    "raw_version",
+    "normalized_version",
+    "is_prerelease",
+    "is_yanked"
+  ],
+  "title": "VersionRecord",
+  "type": "object"
+}

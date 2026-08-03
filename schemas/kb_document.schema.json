@@ -1,0 +1,262 @@
+{
+  "$defs": {
+    "Confidence": {
+      "additionalProperties": false,
+      "description": "Bounded confidence with explicit supporting rationale.",
+      "properties": {
+        "rationale": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Rationale",
+          "type": "array"
+        },
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "Confidence",
+      "type": "object"
+    },
+    "DetectionType": {
+      "description": "Evidence required to decide whether a security pattern applies.",
+      "enum": [
+        "version_only",
+        "version_api",
+        "version_api_configuration",
+        "version_api_dataflow",
+        "version_api_configuration_dataflow",
+        "security_assumption_mismatch"
+      ],
+      "title": "DetectionType",
+      "type": "string"
+    },
+    "KBDocumentMetadata": {
+      "additionalProperties": false,
+      "description": "Filters attached to a retrieval-oriented document.",
+      "properties": {
+        "advisory_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Advisory Ids",
+          "type": "array"
+        },
+        "affected_versions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Affected Versions",
+          "type": "array"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "detection_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DetectionType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fixed_versions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Fixed Versions",
+          "type": "array"
+        },
+        "package_name": {
+          "minLength": 1,
+          "title": "Package Name",
+          "type": "string"
+        },
+        "symbols": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Symbols",
+          "type": "array"
+        }
+      },
+      "required": [
+        "package_name"
+      ],
+      "title": "KBDocumentMetadata",
+      "type": "object"
+    },
+    "KBDocumentType": {
+      "description": "Retrieval-document family.",
+      "enum": [
+        "version",
+        "advisory",
+        "patch",
+        "security_pattern"
+      ],
+      "title": "KBDocumentType",
+      "type": "string"
+    },
+    "PackageRecord": {
+      "additionalProperties": false,
+      "description": "Package identity embedded in normalized records.",
+      "properties": {
+        "ecosystem": {
+          "minLength": 1,
+          "title": "Ecosystem",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "purl": {
+          "minLength": 1,
+          "title": "Purl",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "ecosystem",
+        "purl"
+      ],
+      "title": "PackageRecord",
+      "type": "object"
+    },
+    "ProvenanceRecord": {
+      "additionalProperties": false,
+      "description": "Trace from a normalized claim to one preserved raw source.",
+      "properties": {
+        "extractor_version": {
+          "minLength": 1,
+          "title": "Extractor Version",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "retrieved_at",
+        "raw_sha256",
+        "extractor_version"
+      ],
+      "title": "ProvenanceRecord",
+      "type": "object"
+    }
+  },
+  "$id": "urn:urllib3-knowledge-crawler:schema:1.0:kb_document",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Retrieval-oriented document derived from normalized records.",
+  "properties": {
+    "content": {
+      "minLength": 1,
+      "title": "Content",
+      "type": "string"
+    },
+    "document_type": {
+      "$ref": "#/$defs/KBDocumentType"
+    },
+    "metadata": {
+      "$ref": "#/$defs/KBDocumentMetadata"
+    },
+    "package": {
+      "$ref": "#/$defs/PackageRecord"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceRecord"
+      },
+      "minItems": 1,
+      "title": "Provenance",
+      "type": "array"
+    },
+    "record_id": {
+      "pattern": "^[a-z][a-z0-9_]*:[0-9a-f]{64}$",
+      "title": "Record Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "kb_document",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_record_ids": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9_]*:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Record Ids",
+      "type": "array"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "record_id",
+    "package",
+    "provenance",
+    "record_type",
+    "document_type",
+    "title",
+    "content",
+    "metadata",
+    "source_record_ids"
+  ],
+  "title": "KBDocumentRecord",
+  "type": "object"
+}

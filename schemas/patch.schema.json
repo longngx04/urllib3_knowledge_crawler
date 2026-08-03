@@ -1,0 +1,232 @@
+{
+  "$defs": {
+    "Confidence": {
+      "additionalProperties": false,
+      "description": "Bounded confidence with explicit supporting rationale.",
+      "properties": {
+        "rationale": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Rationale",
+          "type": "array"
+        },
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "Confidence",
+      "type": "object"
+    },
+    "PackageRecord": {
+      "additionalProperties": false,
+      "description": "Package identity embedded in normalized records.",
+      "properties": {
+        "ecosystem": {
+          "minLength": 1,
+          "title": "Ecosystem",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "purl": {
+          "minLength": 1,
+          "title": "Purl",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "ecosystem",
+        "purl"
+      ],
+      "title": "PackageRecord",
+      "type": "object"
+    },
+    "ProvenanceRecord": {
+      "additionalProperties": false,
+      "description": "Trace from a normalized claim to one preserved raw source.",
+      "properties": {
+        "extractor_version": {
+          "minLength": 1,
+          "title": "Extractor Version",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "retrieved_at",
+        "raw_sha256",
+        "extractor_version"
+      ],
+      "title": "ProvenanceRecord",
+      "type": "object"
+    }
+  },
+  "$id": "urn:urllib3-knowledge-crawler:schema:1.0:patch",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Normalized patch and regression-evidence correlation.",
+  "properties": {
+    "added_guards": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Added Guards",
+      "type": "array"
+    },
+    "advisory_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Advisory Ids",
+      "type": "array"
+    },
+    "behavioral_differences": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Behavioral Differences",
+      "type": "array"
+    },
+    "changed_files": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Files",
+      "type": "array"
+    },
+    "changed_symbols": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Symbols",
+      "type": "array"
+    },
+    "commit_sha": {
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+      "title": "Commit Sha",
+      "type": "string"
+    },
+    "confidence": {
+      "$ref": "#/$defs/Confidence"
+    },
+    "fixed_versions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Fixed Versions",
+      "type": "array"
+    },
+    "package": {
+      "$ref": "#/$defs/PackageRecord"
+    },
+    "parent_sha": {
+      "anyOf": [
+        {
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Sha"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceRecord"
+      },
+      "minItems": 1,
+      "title": "Provenance",
+      "type": "array"
+    },
+    "record_id": {
+      "pattern": "^[a-z][a-z0-9_]*:[0-9a-f]{64}$",
+      "title": "Record Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "patch",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "regression_tests": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Regression Tests",
+      "type": "array"
+    },
+    "repository_url": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Url"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "record_id",
+    "package",
+    "provenance",
+    "record_type",
+    "advisory_ids",
+    "commit_sha",
+    "confidence"
+  ],
+  "title": "PatchRecord",
+  "type": "object"
+}

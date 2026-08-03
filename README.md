@@ -6,13 +6,18 @@ pipeline will connect package versions and authoritative advisories to relevant 
 configuration, data-flow conditions, negative conditions, patches, and regression
 tests.
 
-## Phase 0 scope
+## Current scope (Phases 0–1)
 
-This bootstrap provides an installable typed package, a discoverable CLI seam,
-package-specific configuration, repository boundaries, offline tests, and local
-quality-tool configuration. It intentionally does **not** implement domain models,
-schemas, HTTP clients, crawling, normalization, enrichment, validation, statistics,
-or query behavior. No Phase 0 command contacts the network or reads credentials.
+Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
+configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
+adds strict domain records, deterministic record identifiers, and checked-in JSON
+Schemas. The data-contract decisions are documented in
+[`docs/data_contracts.md`](docs/data_contracts.md).
+
+The project still intentionally does **not** implement HTTP clients, crawling, source
+normalization, alias/version-range resolution, enrichment, validation commands,
+statistics, or query behavior. Current commands do not contact the network or read
+credentials.
 
 Python 3.11 or newer is required. Phase 0 is verified with Python 3.12.
 
@@ -89,7 +94,7 @@ crawler/
   validators/    # Schema and semantic validation (later phase)
   exporters/     # JSONL, manifests, and statistics (later phase)
   utils/         # Shared infrastructure helpers (later phase)
-schemas/         # JSON Schema contracts (later phase)
+schemas/         # Checked-in Phase 1 JSON Schema contracts
 tests/fixtures/  # Offline test inputs
 data/raw/        # Preserved source responses
 data/normalized/ # Deterministic normalized JSONL
