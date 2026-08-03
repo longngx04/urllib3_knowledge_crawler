@@ -147,8 +147,13 @@ user's latest explicit request first, then these rules, then the project plan.
 6. Stage only files belonging to the task. Review the staged diff before committing.
 7. Do not amend, rebase, force-push, delete branches, or rewrite shared history
    unless the user explicitly requests it.
-8. Do not push commits or open pull requests unless the user requests publishing or
-   the current task explicitly includes it.
+8. After every completed-task commit, run a final secret/status check and push the
+   current branch to the configured GitHub remote. If the remote or authentication is
+   unavailable, report the blocker instead of claiming the task is fully published.
+9. When work is performed on a new branch, push that branch with its upstream tracking
+   reference (for example, `git push -u origin <branch>`). Push only: do not merge it
+   into `main` or any other branch unless the user explicitly requests the merge.
+10. Do not force-push or open a pull request unless the user explicitly requests it.
 
 ## 9. Definition of Task Completion
 
@@ -161,4 +166,5 @@ A task is complete only when:
 - Documentation is updated when public behavior changed.
 - The diff contains no secrets or unrelated changes.
 - The completed task is committed with a focused message.
+- The commit is pushed to GitHub on the current branch without implicitly merging it.
 - Any limitations, unresolved evidence conflicts, or skipped checks are reported.
