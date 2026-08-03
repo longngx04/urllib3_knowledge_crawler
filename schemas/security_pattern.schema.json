@@ -1,0 +1,712 @@
+{
+  "$defs": {
+    "AdvisoryIdentifiers": {
+      "additionalProperties": false,
+      "description": "Canonical advisory identity and explicitly observed aliases.",
+      "properties": {
+        "aliases": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "canonical": {
+          "minLength": 1,
+          "title": "Canonical",
+          "type": "string"
+        },
+        "cve": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cve"
+        },
+        "ghsa": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ghsa"
+        },
+        "osv": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Osv"
+        }
+      },
+      "required": [
+        "canonical"
+      ],
+      "title": "AdvisoryIdentifiers",
+      "type": "object"
+    },
+    "CVSSRecord": {
+      "additionalProperties": false,
+      "description": "CVSS data as reported by a source; absent values remain null.",
+      "properties": {
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vector"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "title": "CVSSRecord",
+      "type": "object"
+    },
+    "Confidence": {
+      "additionalProperties": false,
+      "description": "Bounded confidence with explicit supporting rationale.",
+      "properties": {
+        "rationale": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Rationale",
+          "type": "array"
+        },
+        "score": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "Confidence",
+      "type": "object"
+    },
+    "DetectionType": {
+      "description": "Evidence required to decide whether a security pattern applies.",
+      "enum": [
+        "version_only",
+        "version_api",
+        "version_api_configuration",
+        "version_api_dataflow",
+        "version_api_configuration_dataflow",
+        "security_assumption_mismatch"
+      ],
+      "title": "DetectionType",
+      "type": "string"
+    },
+    "EvidenceRecord": {
+      "additionalProperties": false,
+      "description": "One patch or regression-test evidence pointer.",
+      "properties": {
+        "evidence_type": {
+          "minLength": 1,
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_type",
+        "source_id"
+      ],
+      "title": "EvidenceRecord",
+      "type": "object"
+    },
+    "ImpactRecord": {
+      "additionalProperties": false,
+      "description": "Structured impact without fabricated conclusions.",
+      "properties": {
+        "availability": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability"
+        },
+        "confidentiality": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidentiality"
+        },
+        "data_exposure": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Exposure"
+        },
+        "integrity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Integrity"
+        },
+        "notes": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "rce": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rce"
+        },
+        "ssrf": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ssrf"
+        }
+      },
+      "title": "ImpactRecord",
+      "type": "object"
+    },
+    "PackageRecord": {
+      "additionalProperties": false,
+      "description": "Package identity embedded in normalized records.",
+      "properties": {
+        "ecosystem": {
+          "minLength": 1,
+          "title": "Ecosystem",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "purl": {
+          "minLength": 1,
+          "title": "Purl",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "ecosystem",
+        "purl"
+      ],
+      "title": "PackageRecord",
+      "type": "object"
+    },
+    "ProvenanceRecord": {
+      "additionalProperties": false,
+      "description": "Trace from a normalized claim to one preserved raw source.",
+      "properties": {
+        "extractor_version": {
+          "minLength": 1,
+          "title": "Extractor Version",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "minLength": 1,
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "retrieved_at",
+        "raw_sha256",
+        "extractor_version"
+      ],
+      "title": "ProvenanceRecord",
+      "type": "object"
+    },
+    "RemediationRecord": {
+      "additionalProperties": false,
+      "description": "Observed remediation options and fixed releases.",
+      "properties": {
+        "fixed_versions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Fixed Versions",
+          "type": "array"
+        },
+        "safe_alternatives": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Safe Alternatives",
+          "type": "array"
+        },
+        "upgrade_guidance": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upgrade Guidance"
+        },
+        "workarounds": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Workarounds",
+          "type": "array"
+        }
+      },
+      "title": "RemediationRecord",
+      "type": "object"
+    },
+    "VersionEvent": {
+      "additionalProperties": false,
+      "description": "One ordered boundary event from an upstream version range.",
+      "properties": {
+        "fixed": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fixed"
+        },
+        "introduced": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Introduced"
+        },
+        "last_affected": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Affected"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "title": "VersionEvent",
+      "type": "object"
+    },
+    "VersionRange": {
+      "additionalProperties": false,
+      "description": "Auditable source range plus optional resolver output.",
+      "properties": {
+        "events": {
+          "items": {
+            "$ref": "#/$defs/VersionEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "fixed_versions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Fixed Versions",
+          "type": "array"
+        },
+        "raw": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw"
+        },
+        "resolved": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Resolved",
+          "type": "array"
+        }
+      },
+      "title": "VersionRange",
+      "type": "object"
+    },
+    "VulnerableUsage": {
+      "additionalProperties": false,
+      "description": "Application conditions required for a vulnerability to apply.",
+      "properties": {
+        "api_sequence": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Api Sequence",
+          "type": "array"
+        },
+        "arguments": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Arguments",
+          "type": "array"
+        },
+        "classes": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Classes",
+          "type": "array"
+        },
+        "modules": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Modules",
+          "type": "array"
+        },
+        "preconditions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "required_dataflow": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Dataflow",
+          "type": "array"
+        },
+        "sinks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Sinks",
+          "type": "array"
+        },
+        "sources": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "symbols": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Symbols",
+          "type": "array"
+        }
+      },
+      "title": "VulnerableUsage",
+      "type": "object"
+    }
+  },
+  "$id": "urn:urllib3-knowledge-crawler:schema:1.0:security_pattern",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Version- and usage-aware knowledge consumed by SAST analysis.",
+  "properties": {
+    "confidence": {
+      "$ref": "#/$defs/Confidence"
+    },
+    "cvss": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CVSSRecord"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "cwe": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Cwe",
+      "type": "array"
+    },
+    "detection_type": {
+      "$ref": "#/$defs/DetectionType"
+    },
+    "identifiers": {
+      "$ref": "#/$defs/AdvisoryIdentifiers"
+    },
+    "impact": {
+      "$ref": "#/$defs/ImpactRecord"
+    },
+    "negative_conditions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Negative Conditions",
+      "type": "array"
+    },
+    "package": {
+      "$ref": "#/$defs/PackageRecord"
+    },
+    "patch_evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRecord"
+      },
+      "title": "Patch Evidence",
+      "type": "array"
+    },
+    "provenance": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceRecord"
+      },
+      "minItems": 1,
+      "title": "Provenance",
+      "type": "array"
+    },
+    "record_id": {
+      "pattern": "^[a-z][a-z0-9_]*:[0-9a-f]{64}$",
+      "title": "Record Id",
+      "type": "string"
+    },
+    "record_type": {
+      "const": "security_pattern",
+      "title": "Record Type",
+      "type": "string"
+    },
+    "remediation": {
+      "$ref": "#/$defs/RemediationRecord"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "severity": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Severity"
+    },
+    "test_evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRecord"
+      },
+      "title": "Test Evidence",
+      "type": "array"
+    },
+    "version": {
+      "$ref": "#/$defs/VersionRange"
+    },
+    "vulnerable_usage": {
+      "$ref": "#/$defs/VulnerableUsage"
+    }
+  },
+  "required": [
+    "schema_version",
+    "record_id",
+    "package",
+    "provenance",
+    "record_type",
+    "identifiers",
+    "version",
+    "detection_type",
+    "vulnerable_usage",
+    "impact",
+    "remediation",
+    "confidence"
+  ],
+  "title": "SecurityPatternRecord",
+  "type": "object"
+}
