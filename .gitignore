@@ -1,5 +1,66 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments and local environment files
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+wheels/
+pip-wheel-metadata/
+
+# Test, coverage, lint, and type-checker state
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+# Editors and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+
+# Generated crawler output. Keep explicit directory markers versioned.
+data/raw/**
+data/normalized/**
+data/kb/**
+data/manifest.json
+data/stats.json
+!data/raw/.gitkeep
+!data/normalized/.gitkeep
+!data/kb/.gitkeep
 
 # /flow run-state (generated; safe to ignore)
 MODE
 PROJECT_TYPE
 .flow/
+flow/.lock
+cards/.inflight
