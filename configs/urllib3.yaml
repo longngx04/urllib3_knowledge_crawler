@@ -1,0 +1,39 @@
+package:
+  name: urllib3
+  ecosystem: PyPI
+  purl: pkg:pypi/urllib3
+  repository: urllib3/urllib3
+  version_scheme: pep440
+
+sources:
+  pypi: true
+  github_releases: true
+  github_tags: true
+  changelog: true
+  github_advisories: true
+  osv: true
+  nvd: optional
+  patches: true
+  regression_tests: true
+
+repository:
+  default_branch: main
+  changelog_candidates:
+    - CHANGES.rst
+    - CHANGELOG.md
+    - HISTORY.rst
+  security_policy_candidates:
+    - SECURITY.md
+    - .github/SECURITY.md
+
+output:
+  directory: data
+  deterministic: true
+  include_raw: true
+  include_kb_documents: true
+
+crawl:
+  timeout_seconds: 30
+  max_retries: 4
+  cache_enabled: true
+  respect_rate_limits: true

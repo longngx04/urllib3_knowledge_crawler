@@ -142,17 +142,17 @@ logic.
 
 ### Tasks
 
-- [ ] Create the repository structure described in `context.md`.
-- [ ] Add `pyproject.toml`.
-- [ ] Select a supported Python version.
-- [ ] Add runtime dependencies.
-- [ ] Add development dependencies.
-- [ ] Add `.gitignore`.
-- [ ] Add `.env.example`.
-- [ ] Add `configs/urllib3.yaml`.
-- [ ] Add an initial `README.md`.
-- [ ] Configure formatting, linting, and testing.
-- [ ] Add a minimal CLI that prints help.
+- [x] Create the repository structure described in `context.md`.
+- [x] Add `pyproject.toml`.
+- [x] Select a supported Python version.
+- [x] Add runtime dependencies.
+- [x] Add development dependencies.
+- [x] Add `.gitignore`.
+- [x] Add `.env.example`.
+- [x] Add `configs/urllib3.yaml`.
+- [x] Add an initial `README.md`.
+- [x] Configure formatting, linting, and testing.
+- [x] Add a minimal CLI that prints help.
 
 ### Suggested Dependencies
 
