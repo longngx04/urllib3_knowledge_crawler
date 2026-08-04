@@ -130,3 +130,57 @@ def test_alias_resolver_merges_linked_cluster(base_package, prov1, prov2):
     assert sorted(m.affected_versions) == ["2.0.0", "2.0.1", "2.0.2"]
     assert len(m.provenance) == 2
     assert len(m.references) == 2
+
+
+def test_alias_resolver_reports_source_conflict_for_multiple_ghsa_ids(
+    base_package, prov1, prov2
+):
+    """Explicit source-conflict coverage for Phase 12 reproducibility contract."""
+    adv1 = AdvisoryRecord(
+        schema_version="1.0",
+        record_id="advisory:" + "1" * 64,
+        record_type="advisory",
+        package=base_package,
+        provenance=[prov1],
+        identifiers=AdvisoryIdentifiers(
+            canonical="GHSA-aaaa-1111-2222",
+            aliases=["CVE-2023-99999"],
+            cve="CVE-2023-99999",
+            ghsa="GHSA-aaaa-1111-2222",
+        ),
+        summary="First GHSA summary",
+        cwe=["CWE-200"],
+        affected_versions=["1.0.0"],
+        fixed_versions=["1.0.1"],
+        source_priority=SourcePriority.TIER_1_AUTHORITATIVE,
+        confidence=Confidence(score=1.0, rationale=["Source 1"]),
+    )
+    adv2 = AdvisoryRecord(
+        schema_version="1.0",
+        record_id="advisory:" + "2" * 64,
+        record_type="advisory",
+        package=base_package,
+        provenance=[prov2],
+        identifiers=AdvisoryIdentifiers(
+            canonical="GHSA-bbbb-3333-4444",
+            aliases=["CVE-2023-99999"],
+            cve="CVE-2023-99999",
+            ghsa="GHSA-bbbb-3333-4444",
+        ),
+        summary="Second GHSA summary",
+        cwe=["CWE-200"],
+        affected_versions=["1.1.0"],
+        fixed_versions=["1.1.1"],
+        source_priority=SourcePriority.TIER_1_AUTHORITATIVE,
+        confidence=Confidence(score=1.0, rationale=["Source 2"]),
+    )
+
+    resolver = AliasResolver()
+    merged, conflicts = resolver.resolve_advisories([adv1, adv2])
+
+    assert len(merged) == 1
+    assert len(conflicts) == 1
+    conflict = conflicts[0]
+    assert conflict.canonical_id == "GHSA-aaaa-1111-2222"
+    assert conflict.conflicting_ids == ["GHSA-aaaa-1111-2222", "GHSA-bbbb-3333-4444"]
+    assert "multiple distinct GHSA" in conflict.reason

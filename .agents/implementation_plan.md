@@ -755,17 +755,17 @@ Ensure the submitted result can be rerun and trusted.
 
 ### Tasks
 
-- [ ] Add unit tests for every normalizer and resolver.
-- [ ] Add mocked HTTP tests.
-- [ ] Add fixture-based integration test.
-- [ ] Add deterministic-output test.
-- [ ] Add corrupted-cache test.
-- [ ] Add rate-limit test.
-- [ ] Add source-conflict test.
-- [ ] Add CLI smoke test.
-- [ ] Add a clean-environment installation test.
-- [ ] Freeze or lock dependencies.
-- [ ] Document exact reproduction commands.
+- [x] Add unit tests for every normalizer and resolver.
+- [x] Add mocked HTTP tests.
+- [x] Add fixture-based integration test.
+- [x] Add deterministic-output test.
+- [x] Add corrupted-cache test.
+- [x] Add rate-limit test.
+- [x] Add source-conflict test.
+- [x] Add CLI smoke test.
+- [x] Add a clean-environment installation test.
+- [x] Freeze or lock dependencies.
+- [x] Document exact reproduction commands.
 
 ### Deterministic Output Test
 
