@@ -6,7 +6,7 @@ pipeline will connect package versions and authoritative advisories to relevant 
 configuration, data-flow conditions, negative conditions, patches, and regression
 tests.
 
-## Current scope (Phases 0–8)
+## Current scope (Phases 0–9)
 
 Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
 configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
@@ -30,10 +30,12 @@ version lists; see [`docs/range_resolution.md`](docs/range_resolution.md). Phase
 enriches advisories with official commit diff evidence and regression-test paths; see
 [`docs/patch_enrichment.md`](docs/patch_enrichment.md). Phase 8 extracts SAST-oriented
 security patterns from advisories and patch evidence; see
-[`docs/security_patterns.md`](docs/security_patterns.md).
+[`docs/security_patterns.md`](docs/security_patterns.md). Phase 9 generates
+retrieval-oriented KB documents from security patterns; see
+[`docs/kb_documents.md`](docs/kb_documents.md).
 
-The project still intentionally does **not** implement KB document generation, NVD,
-pipeline CLI crawl commands, global `stats.json` export, or query behavior.
+The project still intentionally does **not** implement pipeline CLI crawl commands,
+global `stats.json` export, validation orchestration, or query behavior.
 Current CLI commands do not contact the network or read credentials; default tests
 exercise retrieval and source adapters offline with fixtures.
 

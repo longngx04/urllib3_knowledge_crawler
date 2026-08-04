@@ -238,3 +238,7 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR38 → three offline advisory/patch fixture pairs covering version+API, version+API+configuration, and version+API+data-flow detection classes.
 - FR39 → semantic extractor confidence rationale and version-range copy policy.
 - FR40 → security-pattern JSONL exporter, SAST usefulness scoring, and atomic write safety shared with version export.
+- FR41 → KB document normalizer topic templates, metadata filters, and `KBDocumentRecord` shared shape.
+- FR42 → three offline security-pattern fixture pairs producing multi-document KB inventories.
+- FR43 → KB document inventory deduplication stats (`duplicate_rate`).
+- FR44 → KB document JSONL exporter, 32 KiB content limit, and atomic write to `kb/documents.jsonl`.

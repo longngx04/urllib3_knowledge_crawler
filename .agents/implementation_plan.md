@@ -598,16 +598,16 @@ For each high-value vulnerability, generate:
 
 ### Tasks
 
-- [ ] Define chunk templates.
-- [ ] Keep one topic per document.
-- [ ] Attach structured metadata.
-- [ ] Include package and version filters.
-- [ ] Include symbol filters.
-- [ ] Include advisory IDs.
-- [ ] Include evidence references.
-- [ ] Export `data/kb/documents.jsonl`.
-- [ ] Validate maximum document size.
-- [ ] Avoid duplicating identical content.
+- [x] Define chunk templates.
+- [x] Keep one topic per document.
+- [x] Attach structured metadata.
+- [x] Include package and version filters.
+- [x] Include symbol filters.
+- [x] Include advisory IDs.
+- [x] Include evidence references.
+- [x] Export `data/kb/documents.jsonl`.
+- [x] Validate maximum document size.
+- [x] Avoid duplicating identical content.
 
 ### Retrieval Metadata
 
