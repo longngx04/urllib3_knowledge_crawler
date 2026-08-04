@@ -97,6 +97,13 @@ Schema version `1.0` follows these compatibility rules:
 - schema changes land with model changes, regenerated files, migration notes, and tests
   in the same commit.
 
+Phase 3 makes a compatible optional addition to `DistributionArtifact`: package type,
+Python tag, per-file `requires_python`, upload timestamp, and yanked state/reason. These
+fields preserve PyPI's file-level evidence when a release contains distributions with
+different metadata. Existing producers remain valid because the new scalar fields are
+optional and `is_yanked` defaults to `false`; the checked-in version schema is regenerated
+with the implementation and serialization tests.
+
 To regenerate schemas intentionally:
 
 ```bash

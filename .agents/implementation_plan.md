@@ -294,18 +294,18 @@ Build the authoritative version inventory for `urllib3`.
 
 ### Tasks
 
-- [ ] Fetch project metadata from PyPI.
-- [ ] Extract all releases.
-- [ ] Extract all distribution files.
-- [ ] Capture release date.
-- [ ] Capture `requires_python`.
-- [ ] Capture yanked status and reason.
-- [ ] Normalize versions using PEP 440.
-- [ ] Mark prereleases.
-- [ ] Detect unparsable versions.
-- [ ] Export `versions.jsonl`.
-- [ ] Add version statistics.
-- [ ] Add unit tests for sorting and edge cases.
+- [x] Fetch project metadata from PyPI.
+- [x] Extract all releases.
+- [x] Extract all distribution files.
+- [x] Capture release date.
+- [x] Capture `requires_python`.
+- [x] Capture yanked status and reason.
+- [x] Normalize versions using PEP 440.
+- [x] Mark prereleases.
+- [x] Detect unparsable versions.
+- [x] Export `versions.jsonl`.
+- [x] Add version statistics.
+- [x] Add unit tests for sorting and edge cases.
 
 ### Validation
 

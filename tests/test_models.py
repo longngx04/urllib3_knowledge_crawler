@@ -8,6 +8,7 @@ from pydantic import BaseModel, ValidationError
 
 from crawler.models import (
     Confidence,
+    DistributionArtifact,
     ProvenanceRecord,
     VersionEvent,
     VersionRange,
@@ -66,6 +67,18 @@ def test_provenance_requires_aware_timestamp_and_valid_digest() -> None:
             retrieved_at=datetime(2026, 8, 3),
             raw_sha256="not-a-digest",
             extractor_version="0.1.0",
+        )
+
+
+def test_distribution_artifact_rejects_unsafe_name_and_orphan_yanked_reason() -> None:
+    with pytest.raises(ValidationError, match="safe basename"):
+        DistributionArtifact(filename="../urllib3.whl")
+
+    with pytest.raises(ValidationError, match="requires is_yanked=true"):
+        DistributionArtifact(
+            filename="urllib3-2.0.0.tar.gz",
+            is_yanked=False,
+            yanked_reason="withdrawn",
         )
 
 

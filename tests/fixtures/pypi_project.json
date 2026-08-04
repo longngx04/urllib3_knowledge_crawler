@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "urllib3"
+  },
+  "releases": {
+    "1.26.18": [
+      {
+        "digests": {"sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "filename": "urllib3-1.26.18.tar.gz",
+        "packagetype": "sdist",
+        "python_version": "source",
+        "requires_python": ">=3.7",
+        "size": 320000,
+        "upload_time_iso_8601": "2023-10-17T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/aa/urllib3-1.26.18.tar.gz",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.0.0a1": [
+      {
+        "digests": {"sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+        "filename": "urllib3-2.0.0a1-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.7",
+        "size": 120000,
+        "upload_time_iso_8601": "2022-11-23T09:00:00+00:00",
+        "url": "https://files.pythonhosted.org/packages/bb/urllib3-2.0.0a1-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.1.0": [
+      {
+        "digests": {"sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},
+        "filename": "urllib3-2.1.0-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.8",
+        "size": 104000,
+        "upload_time_iso_8601": "2023-11-13T12:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/cc/urllib3-2.1.0-py3-none-any.whl",
+        "yanked": true,
+        "yanked_reason": "synthetic fixture reason"
+      },
+      {
+        "digests": {"sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"},
+        "filename": "urllib3-2.1.0.tar.gz",
+        "packagetype": "sdist",
+        "python_version": "source",
+        "requires_python": ">=3.8",
+        "size": 260000,
+        "upload_time_iso_8601": "2023-11-13T12:01:00Z",
+        "url": "https://files.pythonhosted.org/packages/dd/urllib3-2.1.0.tar.gz",
+        "yanked": true,
+        "yanked_reason": "synthetic fixture reason"
+      }
+    ],
+    "2.2.0": [
+      {
+        "digests": {"sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},
+        "filename": "urllib3-2.2.0-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.8",
+        "size": 121000,
+        "upload_time_iso_8601": "2024-01-30T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/ee/urllib3-2.2.0-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      },
+      {
+        "digests": {"sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+        "filename": "urllib3-2.2.0.tar.gz",
+        "packagetype": "sdist",
+        "python_version": "source",
+        "requires_python": ">=3.9",
+        "size": 275000,
+        "upload_time_iso_8601": "2024-01-30T10:02:00Z",
+        "url": "https://files.pythonhosted.org/packages/ff/urllib3-2.2.0.tar.gz",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "3.0.0": [],
+    "not-a-version": []
+  }
+}

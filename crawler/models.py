@@ -161,6 +161,25 @@ class DistributionArtifact(ContractModel):
     url: NonEmptyStr | None = None
     size: Annotated[int, Field(ge=0)] | None = None
     sha256: Sha256Hex | None = None
+    package_type: NonEmptyStr | None = None
+    python_version: NonEmptyStr | None = None
+    requires_python: NonEmptyStr | None = None
+    upload_time: AwareDatetime | None = None
+    is_yanked: bool = False
+    yanked_reason: NonEmptyStr | None = None
+
+    @field_validator("filename")
+    @classmethod
+    def validate_filename(cls, value: str) -> str:
+        if value in {".", ".."} or "/" in value or "\\" in value or "\x00" in value:
+            raise ValueError("artifact filename must be a safe basename")
+        return value
+
+    @model_validator(mode="after")
+    def validate_yanked_reason(self) -> DistributionArtifact:
+        if self.yanked_reason is not None and not self.is_yanked:
+            raise ValueError("a yanked reason requires is_yanked=true")
+        return self
 
 
 class NormalizedRecord(ContractModel):

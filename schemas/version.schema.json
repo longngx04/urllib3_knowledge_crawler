@@ -9,6 +9,50 @@
           "title": "Filename",
           "type": "string"
         },
+        "is_yanked": {
+          "default": false,
+          "title": "Is Yanked",
+          "type": "boolean"
+        },
+        "package_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package Type"
+        },
+        "python_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Python Version"
+        },
+        "requires_python": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requires Python"
+        },
         "sha256": {
           "anyOf": [
             {
@@ -35,6 +79,19 @@
           "default": null,
           "title": "Size"
         },
+        "upload_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upload Time"
+        },
         "url": {
           "anyOf": [
             {
@@ -47,6 +104,19 @@
           ],
           "default": null,
           "title": "Url"
+        },
+        "yanked_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yanked Reason"
         }
       },
       "required": [

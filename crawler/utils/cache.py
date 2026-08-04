@@ -178,7 +178,7 @@ def build_request_identity(
             raise UnsafeRequestError(
                 "credentials are not allowed in request query parameters"
             )
-    normalized_query = urlencode(query_pairs).encode("ascii")
+    normalized_query = urlencode(query_pairs).encode("ascii") if query_pairs else None
     normalized_url = str(parsed.copy_with(query=normalized_query, fragment=None))
     body_sha256 = hashlib.sha256(body).hexdigest() if body is not None else None
     return RequestIdentity(
