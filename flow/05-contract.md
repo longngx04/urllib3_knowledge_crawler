@@ -226,3 +226,7 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR30 → version-range resolver and `VersionRange` shared shape.
 - FR31 → version-range resolver issue reporting for missing fixed versions and contradictions.
 - FR32 → `RangeResolutionStats` and typed `RangeResolutionIssue` reports.
+- FR33 → GitHub commit client, patch diff extractor, and `PatchRecord` shared shape.
+- FR34 → patch normalizer and three offline commit fixtures for detection-class coverage.
+- FR35 → patch normalizer repository verification and `UnresolvedPatchRef` reporting.
+- FR36 → patch JSONL exporter and atomic write safety shared with version export.

@@ -211,3 +211,80 @@ class TestFetchFile:
         )
         with retrieval, pytest.raises(GitHubClientError, match="HTTP 404"):
             client.fetch_file("urllib3", "urllib3", "CHANGES.rst")
+
+
+class TestFetchCommit:
+    def test_canonical_url(self) -> None:
+        seen_urls: list[str] = []
+        commit_sha = "a" * 40
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen_urls.append(str(request.url))
+            return httpx.Response(
+                200,
+                json={"sha": commit_sha, "files": []},
+                headers={"content-type": "application/json"},
+            )
+
+        retrieval, client = _make_client(httpx.MockTransport(handler))
+        with retrieval:
+            client.fetch_commit("urllib3", "urllib3", commit_sha)
+        assert len(seen_urls) == 1
+        assert (
+            seen_urls[0]
+            == f"https://api.github.com/repos/urllib3/urllib3/commits/{commit_sha}"
+        )
+
+    def test_invalid_sha_rejected(self) -> None:
+        retrieval, client = _make_client()
+        with retrieval, pytest.raises(GitHubClientError, match="invalid commit SHA"):
+            client.fetch_commit("urllib3", "urllib3", "not-a-sha")
+
+    def test_short_sha_rejected(self) -> None:
+        retrieval, client = _make_client()
+        with retrieval, pytest.raises(GitHubClientError, match="invalid commit SHA"):
+            client.fetch_commit("urllib3", "urllib3", "abc123")
+
+    def test_non_200_rejected(self) -> None:
+        retrieval, client = _make_client(
+            httpx.MockTransport(
+                lambda r: httpx.Response(
+                    404, json={}, headers={"content-type": "application/json"}
+                )
+            )
+        )
+        with retrieval, pytest.raises(GitHubClientError, match="HTTP 404"):
+            client.fetch_commit("urllib3", "urllib3", "a" * 40)
+
+    def test_non_json_rejected(self) -> None:
+        retrieval, client = _make_client(
+            httpx.MockTransport(
+                lambda r: httpx.Response(
+                    200,
+                    content=b"not json",
+                    headers={"content-type": "text/plain"},
+                )
+            )
+        )
+        with retrieval, pytest.raises(GitHubClientError, match="not application/json"):
+            client.fetch_commit("urllib3", "urllib3", "a" * 40)
+
+    def test_fixture_commit_parse(self) -> None:
+        fixture_data = json.loads(
+            (FIXTURES / "github_commit_version_api.json").read_text("utf-8")
+        )
+        commit_sha = fixture_data["sha"]
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            return httpx.Response(
+                200,
+                json=fixture_data,
+                headers={"content-type": "application/json"},
+            )
+
+        retrieval, client = _make_client(httpx.MockTransport(handler))
+        with retrieval:
+            response = client.fetch_commit("urllib3", "urllib3", commit_sha)
+        payload = json.loads(response.content)
+        assert payload["sha"] == commit_sha
+        assert len(payload["files"]) == 2
