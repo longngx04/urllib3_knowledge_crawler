@@ -569,9 +569,7 @@ def stage_validate(state: PipelineState, *, strict: bool = False) -> ValidationR
     if state.patterns is None:
         patterns_path = state.paths.normalized / "security_patterns.jsonl"
         if patterns_path.is_file():
-            pattern_records = load_jsonl_records(
-                patterns_path, SecurityPatternRecord
-            )
+            pattern_records = load_jsonl_records(patterns_path, SecurityPatternRecord)
             state.patterns = SecurityPatternInventory(
                 package=state.package,
                 records=tuple(pattern_records),
