@@ -1,0 +1,44 @@
+{
+  "id": "GHSA-v845-j25r-839j",
+  "summary": "Cookie disclosure in ProxyManager",
+  "details": "urllib3 before 1.26.5 leaks Cookie headers to destination server when using ProxyManager.",
+  "aliases": [
+    "CVE-2021-33503",
+    "PYSEC-2021-108"
+  ],
+  "modified": "2021-06-15T12:00:00Z",
+  "published": "2021-06-01T15:00:00Z",
+  "database_specific": {
+    "cwe_ids": [
+      "CWE-200"
+    ],
+    "severity": "HIGH"
+  },
+  "references": [
+    {
+      "type": "FIX",
+      "url": "https://github.com/urllib3/urllib3/commit/2d4a3fee6de2bc4580e49e096f6004ccb70868f0"
+    }
+  ],
+  "affected": [
+    {
+      "package": {
+        "name": "urllib3",
+        "ecosystem": "PyPI"
+      },
+      "ranges": [
+        {
+          "type": "ECOSYSTEM",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "1.26.5"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
