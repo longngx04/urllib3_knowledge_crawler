@@ -380,19 +380,19 @@ Collect vulnerability data and construct canonical advisory records.
 
 ### Tasks
 
-- [ ] Implement OSV package query.
+- [x] Implement OSV package query.
 - [ ] Implement GitHub advisory retrieval where available.
 - [ ] Optionally implement NVD enrichment.
-- [ ] Store all raw advisory responses.
-- [ ] Extract identifiers and aliases.
-- [ ] Extract affected ranges.
-- [ ] Extract fixed versions.
-- [ ] Extract severity, CVSS, CWE, dates, references, and workaround.
-- [ ] Implement canonical ID selection.
-- [ ] Merge explicitly linked aliases.
-- [ ] Detect ambiguous alias clusters.
+- [x] Store all raw advisory responses.
+- [x] Extract identifiers and aliases.
+- [x] Extract affected ranges.
+- [x] Extract fixed versions.
+- [x] Extract severity, CVSS, CWE, dates, references, and workaround.
+- [x] Implement canonical ID selection.
+- [x] Merge explicitly linked aliases.
+- [x] Detect ambiguous alias clusters.
 - [ ] Export `advisories.jsonl`.
-- [ ] Add source-conflict reporting.
+- [x] Add source-conflict reporting.
 
 ### Canonical-ID Strategy
 
