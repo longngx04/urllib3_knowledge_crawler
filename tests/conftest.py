@@ -29,6 +29,12 @@ from crawler.models import (
 from crawler.utils.hashing import stable_record_id
 
 
+@pytest.fixture(autouse=True)
+def remove_github_token(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Keep default tests independent of developer credentials."""
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+
+
 @pytest.fixture
 def example_records() -> dict[str, BaseModel]:
     """Return one representative instance for every checked-in schema."""

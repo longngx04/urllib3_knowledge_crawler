@@ -58,7 +58,7 @@ Function/—/Access(=none)/Args/Return. The shared column below is "Access/Effec
 | Data-contract documentation | `docs/data_contracts.md` | Read-only | UTF-8 Markdown | Records canonical advisory identity, dates, null/empty behavior, list ordering, version ranges, provenance, schema compatibility, and ID derivation policy. |
 | Retrieval configuration | `crawler.config.load_http_client_config` | Reads one bounded local UTF-8 YAML file; no environment/network access | `path: Path`; top-level mapping with a `crawl` object | Frozen `HttpClientConfig`; invalid/missing/oversized configuration raises `ConfigurationError` with no secret content. |
 | Request identity | `crawler.utils.cache.build_request_identity` | Pure; no I/O | HTTPS method/URL and optional body bytes | `RequestIdentity(method, url, body_sha256, cache_key)`; method uppercase, query pairs deterministically sorted, fragment removed; userinfo/credential-like query keys/unsupported schemes raise `UnsafeRequestError`. |
-| Raw response store | `crawler.utils.cache.RawResponseStore` | Atomic writes below its resolved root only; reads and verifies cached bytes | `root: Path`; `load(cache_key)`; `store(identity, status_code, headers, retrieved_at, body)` | `StoredResponse | None`; metadata contains request identity, status/content type/time/body SHA and allowlisted cache/rate headers only; corruption/path violations raise typed errors. |
+| Raw response store | `crawler.utils.cache.RawResponseStore` | Atomic writes below its resolved root only; reads and verifies cached bytes | `root: Path`; `load(cache_key, max_body_bytes=None)`; `store(identity, status_code, headers, retrieved_at, body)` | `StoredResponse | None`; metadata contains request identity, status/content type/time/body size/SHA and allowlisted cache/rate headers only; corruption/path/size violations raise typed errors before unbounded body reads. |
 | Retrieval client | `crawler.utils.http.RetrievalClient.fetch` | Cache read/write and optional HTTPS request; no redirects; auth only for GitHub API | `method`, `url`, optional `content`, non-sensitive `headers`; typed config/store; optional `GITHUB_TOKEN` | `RetrievedResponse(status_code, url, headers, content, retrieved_at, body_sha256, cache_key, from_cache, attempts)`; approved transient failures retry boundedly; permanent/oversized/exhausted failures raise typed actionable errors. |
 
 ## Shared shapes (objects used by multiple interfaces)
@@ -151,6 +151,7 @@ RawResponseMetadata:
     content_type: str | null
     retrieved_at: timezone-aware ISO-8601
     body_sha256: 64 lowercase hex
+    body_size: non-negative int
     headers: allowlisted cache/rate-limit header mapping
 ```
 

@@ -14,10 +14,14 @@ adds strict domain records, deterministic record identifiers, and checked-in JSO
 Schemas. The data-contract decisions are documented in
 [`docs/data_contracts.md`](docs/data_contracts.md).
 
-The project still intentionally does **not** implement HTTP clients, crawling, source
+Phase 2 adds a security-bounded HTTPS retrieval client, transient/rate-limit retry,
+scoped GitHub authentication, and a SHA-256-verified raw response cache. Its safety and
+replay contract is documented in [`docs/retrieval.md`](docs/retrieval.md).
+
+The project still intentionally does **not** implement source-specific crawling,
 normalization, alias/version-range resolution, enrichment, validation commands,
-statistics, or query behavior. Current commands do not contact the network or read
-credentials.
+statistics, or query behavior. Current CLI commands do not contact the network or read
+credentials; the Phase 2 library seam is exercised offline by default tests.
 
 Python 3.11 or newer is required. Phase 0 is verified with Python 3.12.
 

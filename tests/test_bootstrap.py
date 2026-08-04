@@ -45,6 +45,9 @@ def test_urllib3_config_matches_bootstrap_contract() -> None:
         "max_retries": 4,
         "cache_enabled": True,
         "respect_rate_limits": True,
+        "max_response_bytes": 10_485_760,
+        "initial_backoff_seconds": 1.0,
+        "max_retry_delay_seconds": 60.0,
     }
 
 

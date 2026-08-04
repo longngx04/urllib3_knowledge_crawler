@@ -243,18 +243,18 @@ Create a reliable shared retrieval layer.
 
 ### Tasks
 
-- [ ] Implement a common HTTP client.
-- [ ] Add timeout configuration.
-- [ ] Add transient-error retry.
-- [ ] Respect `Retry-After`.
-- [ ] Detect GitHub rate limits.
-- [ ] Support `GITHUB_TOKEN`.
-- [ ] Implement response caching.
-- [ ] Store raw response metadata.
-- [ ] Compute SHA256.
-- [ ] Add cache hit/miss logging.
-- [ ] Add maximum response-size guard.
-- [ ] Write tests for retries and caching.
+- [x] Implement a common HTTP client.
+- [x] Add timeout configuration.
+- [x] Add transient-error retry.
+- [x] Respect `Retry-After`.
+- [x] Detect GitHub rate limits.
+- [x] Support `GITHUB_TOKEN`.
+- [x] Implement response caching.
+- [x] Store raw response metadata.
+- [x] Compute SHA256.
+- [x] Add cache hit/miss logging.
+- [x] Add maximum response-size guard.
+- [x] Write tests for retries and caching.
 
 ### Raw Response Metadata
 
