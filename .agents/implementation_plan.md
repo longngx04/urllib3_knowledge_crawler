@@ -391,7 +391,7 @@ Collect vulnerability data and construct canonical advisory records.
 - [x] Implement canonical ID selection.
 - [x] Merge explicitly linked aliases.
 - [x] Detect ambiguous alias clusters.
-- [ ] Export `advisories.jsonl`.
+- [x] Export `advisories.jsonl`.
 - [x] Add source-conflict reporting.
 
 ### Canonical-ID Strategy
@@ -1059,56 +1059,56 @@ Demonstrate:
 
 ### Functionality
 
-- [ ] `python -m crawler run --config configs/urllib3.yaml` works.
-- [ ] PyPI versions are crawled.
-- [ ] Releases and tags are processed.
-- [ ] Changelog is parsed.
-- [ ] Advisories are crawled.
-- [ ] Aliases are deduplicated.
-- [ ] Affected versions are resolved.
-- [ ] Patches are enriched.
-- [ ] Security patterns are generated.
-- [ ] KB documents are generated.
-- [ ] Validation completes.
-- [ ] Statistics are generated.
+- [x] `python -m crawler run --config configs/urllib3.yaml` works.
+- [x] PyPI versions are crawled.
+- [x] Releases and tags are processed.
+- [x] Changelog is parsed.
+- [x] Advisories are crawled.
+- [x] Aliases are deduplicated.
+- [x] Affected versions are resolved.
+- [x] Patches are enriched.
+- [x] Security patterns are generated.
+- [x] KB documents are generated.
+- [x] Validation completes.
+- [x] Statistics are generated.
 
 ### Data Quality
 
-- [ ] All normalized records have provenance.
-- [ ] All JSONL records pass schema validation.
-- [ ] Canonical advisory duplicates are zero.
-- [ ] Fixed versions have source evidence.
-- [ ] Selected security patterns contain negative knowledge.
-- [ ] Source conflicts are documented.
-- [ ] Output ordering is deterministic.
+- [x] All normalized records have provenance.
+- [x] All JSONL records pass schema validation.
+- [x] Canonical advisory duplicates are zero.
+- [x] Fixed versions have source evidence.
+- [x] Selected security patterns contain negative knowledge.
+- [x] Source conflicts are documented.
+- [x] Output ordering is deterministic.
 
 ### Testing
 
-- [ ] Version tests pass.
-- [ ] Range tests pass.
-- [ ] Alias tests pass.
-- [ ] Changelog tests pass.
-- [ ] Cache and retry tests pass.
-- [ ] Integration test passes.
-- [ ] Deterministic-output test passes.
+- [x] Version tests pass.
+- [x] Range tests pass.
+- [x] Alias tests pass.
+- [x] Changelog tests pass.
+- [x] Cache and retry tests pass.
+- [x] Integration test passes.
+- [x] Deterministic-output test passes.
 
 ### Documentation
 
-- [ ] README contains installation and usage.
-- [ ] `context.md` is current.
-- [ ] `implementation_plan.md` is current.
-- [ ] `report.md` contains results and case studies.
-- [ ] `.env.example` documents required variables.
-- [ ] Limitations are explicit.
+- [x] README contains installation and usage.
+- [x] `context.md` is current.
+- [x] `implementation_plan.md` is current.
+- [x] `reports/urllib3_crawl_report.md` contains results and case studies.
+- [x] `.env.example` documents required variables.
+- [x] Limitations are explicit.
 
 ### Security
 
-- [ ] No secrets are committed.
-- [ ] Authorization headers are not logged.
-- [ ] Remote code is never executed.
-- [ ] File paths are validated.
-- [ ] Response-size limits exist.
-- [ ] Failures are not silently ignored.
+- [x] No secrets are committed.
+- [x] Authorization headers are not logged.
+- [x] Remote code is never executed.
+- [x] File paths are validated.
+- [x] Response-size limits exist.
+- [x] Failures are not silently ignored.
 
 ---
 
