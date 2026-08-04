@@ -1,4 +1,4 @@
-# Báo cáo thu thập tri thức bảo mật `urllib3`
+# urllib3 Security Knowledge Crawl Report
 
 **Đối tượng:** Ban lãnh đạo / kỹ thuật phụ trách SAST  
 **Phiên bản dữ liệu:** crawl live ngày 04/08/2026 (`./data`)  
@@ -6,10 +6,10 @@
 
 ---
 
-## 1. Tóm tắt điều hành
+## 1. Tổng quan
 
 Dự án xây dựng cơ sở tri thức bảo mật theo phiên bản (version-aware) cho thư viện
-[`urllib3`](https://github.com/urllib3/urllib3), phục vụ hệ thống **SAST có hỗ trợ AI**.
+[`urllib3`](https://github.com/urllib3/urllib3), phục vụ hệ thống **SAST AI-assisted**.
 
 Mục tiêu không dừng ở mức SCA — tức trả lời “phiên bản đang dùng có nằm trong khoảng bị ảnh
 hưởng hay không” — mà nhằm cung cấp đủ điều kiện để SAST đánh giá: *mã nguồn ứng dụng có thực
@@ -23,23 +23,24 @@ truy hồi (retrieval), cuối cùng validate và xuất thống kê có thể t
 
 ### Kết quả crawl live (đã kiểm chứng)
 
-| Hạng mục | Kết quả |
-|---|---|
-| Phiên bản `urllib3` trong danh mục | **108** (4 prerelease, 4 bị yank) |
-| Advisory sau khi hợp nhất alias | **19** |
-| Alias liên kết (CVE / GHSA / PYSEC) | **57** |
-| Bản ghi patch có bằng chứng diff | **21** |
-| Security pattern cho SAST | **19** |
-| Tài liệu KB phục vụ truy hồi | **92** |
-| Độ phủ provenance | **1.00** |
-| Tỷ lệ hợp lệ theo schema | **1.00** |
+
+| Hạng mục                            | Kết quả                           |
+| ----------------------------------- | --------------------------------- |
+| Phiên bản `urllib3` trong danh mục  | **108** (4 prerelease, 4 bị yank) |
+| Advisory sau khi hợp nhất alias     | **19**                            |
+| Alias liên kết (CVE / GHSA / PYSEC) | **57**                            |
+| Bản ghi patch có bằng chứng diff    | **21**                            |
+| Security pattern cho SAST           | **19**                            |
+| Tài liệu KB phục vụ truy hồi        | **92**                            |
+| Độ phủ provenance                   | **1.00**                          |
+| Tỷ lệ hợp lệ theo schema            | **1.00**                          |
+
 
 ```bash
 python -m crawler run --config configs/urllib3.yaml --output data
 ```
 
-**Đánh giá ngắn:** pipeline vận hành trọn vẹn trên dữ liệu thật; mọi claim bảo mật đều kèm
-provenance; output đủ để engine SAST phán quyết theo *version ∧ API ∧ cấu hình ∧ luồng dữ liệu*
+**Đánh giá nhanh:** pipeline vận hành trọn vẹn trên dữ liệu thật; mọi claim bảo mật đều kèm provenance; output đủ để engine SAST phán quyết theo *version ∧ API ∧ cấu hình ∧ luồng dữ liệu*
 thay vì chỉ so phiên bản. Đồng thời, lần chạy live đã phát hiện **3 lỗi thực thi** (đã khắc
 phục) và **3 hạn chế chất lượng dữ liệu còn tồn tại** — trong đó nghiêm trọng nhất là khoảng
 OSV loại `GIT` mở làm phình tập phiên bản bị ảnh hưởng ở tầng advisory. Chi tiết tại mục 12
@@ -47,33 +48,35 @@ và 13.
 
 ---
 
-## 2. Bối cảnh vấn đề
+## 2.  Bối cảnh vấn đề
 
 Feed SCA tiêu chuẩn cung cấp mã định danh, mô tả, khoảng bị ảnh hưởng, phiên bản đã sửa và
 mức nghiêm trọng. Thông tin này cần thiết nhưng chưa đủ cho SAST, vì còn thiếu bốn khả năng
 sau:
 
-| Hạn chế của SCA thuần version | Hệ quả vận hành |
-|---|---|
-| Không xét điều kiện sử dụng API | Cảnh báo thừa trên code không gọi symbol liên quan |
-| Không mô tả tiền đề cấu hình / data-flow | Bỏ sót trường hợp lỗ hổng chỉ phát tác khi cấu hình rủi ro |
-| Thiếu bằng chứng patch và regression test | Khuyến nghị nâng cấp khó kiểm chứng được |
-| Thiếu provenance | Hệ thống AI không phân biệt được sự thật có nguồn với suy đoán |
+
+| Hạn chế của SCA thuần version             | Hệ quả vận hành                                                |
+| ----------------------------------------- | -------------------------------------------------------------- |
+| Không xét điều kiện sử dụng API           | Cảnh báo thừa trên code không gọi symbol liên quan             |
+| Không mô tả tiền đề cấu hình / data-flow  | Bỏ sót trường hợp lỗ hổng chỉ phát tác khi cấu hình rủi ro     |
+| Thiếu bằng chứng patch và regression test | Khuyến nghị nâng cấp khó kiểm chứng được                       |
+| Thiếu provenance                          | Hệ thống AI không phân biệt được sự thật có nguồn với suy đoán |
+
 
 ---
 
 ## 3. Lý do chọn `urllib3` làm package pilot
 
 1. **Tính phổ biến.** `urllib3` là nền tảng của `requests` và phần lớn stack HTTP Python; tri
-   thức thu được có giá trị áp dụng ngay.
+  thức thu được có giá trị áp dụng ngay.
 2. **Bằng chứng công khai đầy đủ.** PyPI JSON, GitHub tags/releases/changelog/commits, OSV và
-   GHSA đều truy cập được mà không phụ thuộc feed thương mại.
+  GHSA đều truy cập được mà không phụ thuộc feed thương mại.
 3. **Đa dạng lớp phát hiện.** Các lỗ hổng trải đủ API misuse, cấu hình TLS/proxy và tiền đề
-   data-flow qua redirect. Lần crawl live sinh đủ bốn loại `detection_type` (mục 11).
+  data-flow qua redirect. Lần crawl live sinh đủ bốn loại `detection_type` (mục 11).
 4. **Đo lường trung thực.** Một package PEP 440 trưởng thành giúp các chỉ số độ phủ không bị
-   pha loãng bởi nhiều lược đồ version khác nhau.
+  pha loãng bởi nhiều lược đồ version khác nhau.
 5. **Kiến trúc tái sử dụng.** Định danh package nằm trong `configs/urllib3.yaml`; không
-   hardcode sự thật bảo mật của `urllib3` vào logic lõi.
+  hardcode sự thật bảo mật của `urllib3` vào logic lõi.
 
 ---
 
@@ -94,37 +97,41 @@ thác. Nhánh NVD giữ ở mức tuỳ chọn, không nằm trong đường ch�
 
 ---
 
-## 5. Yêu cầu tri thức SAST và ánh xạ artifact
+## 5. Yêu cầu tri thức cho SAST 
 
-| Câu hỏi của engine SAST | Artifact trả lời |
-|---|---|
-| Thư viện có những phiên bản nào? | `data/normalized/versions.jsonl` |
-| Có advisory nào và alias tương ứng? | `data/normalized/advisories.jsonl` + alias resolver |
-| Chính xác phiên bản nào bị ảnh hưởng? | `affected_ranges[].resolved` (range resolver) |
-| Symbol, cấu hình, luồng dữ liệu liên quan? | `data/normalized/security_patterns.jsonl` |
-| Khi nào code được coi là an toàn? | `negative_conditions` trong security pattern |
-| Patch và test chứng minh bản sửa? | `data/normalized/patches.jsonl` |
-| Nội dung phục vụ truy hồi cho LLM? | `data/kb/documents.jsonl` |
-| Mức độ tin cậy của claim? | `provenance` trên từng bản ghi + `data/stats.json` |
+
+| Câu hỏi của engine SAST                    | Artifact trả lời                                    |
+| ------------------------------------------ | --------------------------------------------------- |
+| Thư viện có những phiên bản nào?           | `data/normalized/versions.jsonl`                    |
+| Có advisory nào và alias tương ứng?        | `data/normalized/advisories.jsonl` + alias resolver |
+| Chính xác phiên bản nào bị ảnh hưởng?      | `affected_ranges[].resolved` (range resolver)       |
+| Symbol, cấu hình, luồng dữ liệu liên quan? | `data/normalized/security_patterns.jsonl`           |
+| Khi nào code được coi là an toàn?          | `negative_conditions` trong security pattern        |
+| Patch và test chứng minh bản sửa?          | `data/normalized/patches.jsonl`                     |
+| Nội dung phục vụ truy hồi cho LLM?         | `data/kb/documents.jsonl`                           |
+| Mức độ tin cậy của claim?                  | `provenance` trên từng bản ghi + `data/stats.json`  |
+
 
 ---
 
 ## 6. Đánh giá nguồn dữ liệu
 
-| Nguồn | Hạng | Vai trò |
-|---|---|---|
-| GHSA / ghi chú bảo mật của maintainer | 1 | Hành vi kỹ thuật, tiền đề, khuyến nghị khắc phục |
-| Tag, commit, test, changelog trên repo chính thức | 1 | Bằng chứng patch, symbol thay đổi, regression test |
-| PyPI project JSON | 1 | Danh mục phát hành, ngày upload, trạng thái yank |
-| OSV | 1 | Alias, khoảng bị ảnh hưởng, mức nghiêm trọng |
-| NVD | Tuỳ chọn | Bổ sung CWE/CVSS (chưa bật mặc định) |
+
+| Nguồn                                             | Hạng     | Vai trò                                            |
+| ------------------------------------------------- | -------- | -------------------------------------------------- |
+| GHSA / ghi chú bảo mật của maintainer             | 1        | Hành vi kỹ thuật, tiền đề, khuyến nghị khắc phục   |
+| Tag, commit, test, changelog trên repo chính thức | 1        | Bằng chứng patch, symbol thay đổi, regression test |
+| PyPI project JSON                                 | 1        | Danh mục phát hành, ngày upload, trạng thái yank   |
+| OSV                                               | 1        | Alias, khoảng bị ảnh hưởng, mức nghiêm trọng       |
+| NVD                                               | Tuỳ chọn | Bổ sung CWE/CVSS (chưa bật mặc định)               |
+
 
 **Nguyên tắc xử lý xung đột:** nguồn hạng thấp không được ghi đè âm thầm nguồn hạng cao. Khi
 hai nguồn mâu thuẫn, cả hai claim được giữ kèm lý do thay vì chọn một và xoá dấu vết.
 
 ---
 
-## 7. Kiến trúc pipeline
+## 7. Pipeline Architecture
 
 ```text
 configs/urllib3.yaml
@@ -139,14 +146,14 @@ configs/urllib3.yaml
 
 1. Nạp `configs/urllib3.yaml` (không chứa secret; token đọc từ `.env` hoặc biến môi trường).
 2. Thu thập các nguồn được bật; lưu body gốc và metadata trong allowlist vào `data/raw/`. Lần
-   crawl live tạo **27 response gốc (~1,7 MB)**. Cache địa chỉ hoá theo SHA-256 cho phép chạy
+  crawl live tạo **27 response gốc (~1,7 MB)**. Cache địa chỉ hoá theo SHA-256 cho phép chạy
    lại bằng `--skip-crawl` mà không gọi mạng.
 3. Chuẩn hoá thành model Pydantic Phase 1; mỗi bản ghi kèm provenance (`source_type`,
-   `source_id`, `raw_sha256`, `retrieved_at`, `extractor_version`).
+  `source_id`, `raw_sha256`, `retrieved_at`, `extractor_version`).
 4. Hợp nhất alias theo thứ tự ưu tiên **GHSA > CVE > OSV/PYSEC**, rồi chiếu khoảng bị ảnh
-   hưởng lên danh mục phiên bản PyPI.
+  hưởng lên danh mục phiên bản PyPI.
 5. Tải commit từ URL vá trong advisory; phân tích diff để rút file, symbol, guard mới và
-   regression test.
+  regression test.
 6. Sinh security pattern và tài liệu KB từ bằng chứng đã thu thập.
 7. Validate và xuất `stats.json`, `manifest.json`, `validation_errors.json`.
 
@@ -168,17 +175,19 @@ luôn qua `packaging.version.Version`, không so chuỗi.
 ## 9. Giải phiên bản và alias
 
 - Mọi release PyPI phân tích được đều chuẩn hoá theo PEP 440; khoá không hợp lệ được báo cáo,
-  không bị bỏ âm thầm.
+không bị bỏ âm thầm.
 - Alias chỉ liên kết khi nguồn nêu tường minh; cụm mơ hồ được báo cáo.
 - Khoảng bị ảnh hưởng dựng từ `events` OSV và specifier PEP 440; sentinel `0` nghĩa là “từ đầu
-  lịch sử”; **không suy diễn phiên bản đã sửa** khi nguồn không nêu.
+lịch sử”; **không suy diễn phiên bản đã sửa** khi nguồn không nêu.
 
 ### Kết quả live
 
-| Chỉ số | Giá trị | Diễn giải |
-|---|---|---|
-| `alias_resolution_rate` | 1.00 | 57 alias, không cụm mơ hồ |
-| `version_coverage` | 0.907 | 98/108 phiên bản khớp tag Git hoặc commit; phần còn lại là release rất cũ không có tag tương ứng |
+
+| Chỉ số                  | Giá trị | Diễn giải                                                                                        |
+| ----------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `alias_resolution_rate` | 1.00    | 57 alias, không cụm mơ hồ                                                                        |
+| `version_coverage`      | 0.907   | 98/108 phiên bản khớp tag Git hoặc commit; phần còn lại là release rất cũ không có tag tương ứng |
+
 
 ---
 
@@ -187,10 +196,12 @@ luôn qua `packaging.version.Version`, không so chuỗi.
 21 bản ghi patch được dựng từ commit chính thức. Mỗi bản ghi gồm `commit_sha`, `parent_sha`,
 danh sách file/symbol thay đổi, guard mới thêm và regression test liên quan.
 
-| Chỉ số | Giá trị |
-|---|---|
-| `patch_resolution_rate` | 1.00 |
-| `fixed_release_verification_rate` | 1.00 |
+
+| Chỉ số                            | Giá trị |
+| --------------------------------- | ------- |
+| `patch_resolution_rate`           | 1.00    |
+| `fixed_release_verification_rate` | 1.00    |
+
 
 Mọi phiên bản được nêu là “đã sửa” đều tồn tại trong danh mục PyPI.
 
@@ -220,12 +231,14 @@ LLM (nếu bổ sung sau này) **không được phép** thay đổi khoảng b�
 
 ### Phân bố 19 pattern theo lớp phát hiện
 
-| `detection_type` | Số lượng | Điều kiện phán quyết SAST |
-|---|---|---|
-| `version_api_dataflow` | 10 | version ∧ gọi API ∧ luồng dữ liệu không tin cậy |
-| `version_api` | 4 | version ∧ gọi API liên quan |
-| `version_api_configuration_dataflow` | 2 | thêm điều kiện cấu hình rủi ro |
-| `version_only` | 3 | chưa rút được điều kiện sử dụng — chỉ phù hợp mức SCA |
+
+| `detection_type`                     | Số lượng | Điều kiện phán quyết SAST                             |
+| ------------------------------------ | -------- | ----------------------------------------------------- |
+| `version_api_dataflow`               | 10       | version ∧ gọi API ∧ luồng dữ liệu không tin cậy       |
+| `version_api`                        | 4        | version ∧ gọi API liên quan                           |
+| `version_api_configuration_dataflow` | 2        | thêm điều kiện cấu hình rủi ro                        |
+| `version_only`                       | 3        | chưa rút được điều kiện sử dụng — chỉ phù hợp mức SCA |
+
 
 **Mức nghiêm trọng:** 1 CRITICAL · 9 HIGH · 9 MODERATE  
 **Điểm hữu dụng SAST trung bình:** `average_sast_usefulness_score` = **0.816**
@@ -242,17 +255,19 @@ Mọi lỗi kèm `record_id` và lý do; chế độ strict trả exit code 1.
 
 ### Chỉ số live
 
-| Chỉ số | Giá trị | Nhận xét |
-|---|---|---|
-| `provenance_coverage` | 1.000 | Mọi bản ghi đều truy nguyên được về byte gốc |
-| `schema_validation_rate` | 1.000 | Không bản ghi lệch schema |
-| `duplicate_rate` | 0.000 | Không advisory canonical trùng |
-| `alias_resolution_rate` | 1.000 | 57 alias, không cụm mơ hồ |
-| `patch_resolution_rate` | 1.000 | 21/21 patch có bằng chứng diff |
-| `fixed_release_verification_rate` | 1.000 | Phiên bản “đã sửa” đều tồn tại trên PyPI |
-| `version_coverage` | 0.907 | 98/108 phiên bản khớp tag/commit |
-| `range_resolution_rate` | **0.632** | 7/19 advisory có khoảng bất nhất |
-| `average_sast_usefulness_score` | 0.816 | Bị kéo xuống bởi 3 pattern `version_only` |
+
+| Chỉ số                            | Giá trị   | Nhận xét                                     |
+| --------------------------------- | --------- | -------------------------------------------- |
+| `provenance_coverage`             | 1.000     | Mọi bản ghi đều truy nguyên được về byte gốc |
+| `schema_validation_rate`          | 1.000     | Không bản ghi lệch schema                    |
+| `duplicate_rate`                  | 0.000     | Không advisory canonical trùng               |
+| `alias_resolution_rate`           | 1.000     | 57 alias, không cụm mơ hồ                    |
+| `patch_resolution_rate`           | 1.000     | 21/21 patch có bằng chứng diff               |
+| `fixed_release_verification_rate` | 1.000     | Phiên bản “đã sửa” đều tồn tại trên PyPI     |
+| `version_coverage`                | 0.907     | 98/108 phiên bản khớp tag/commit             |
+| `range_resolution_rate`           | **0.632** | 7/19 advisory có khoảng bất nhất             |
+| `average_sast_usefulness_score`   | 0.816     | Bị kéo xuống bởi 3 pattern `version_only`    |
+
 
 ### Phân tích 7 lỗi `contradictory_ranges`
 
@@ -280,11 +295,13 @@ chỉ đúng chỗ cần sửa thay vì để lỗi âm thầm đi vào phán qu
 Ba lỗi chỉ lộ khi gặp dữ liệu thật. Cả ba đã được sửa kèm test hồi quy
 ([PR #13](https://github.com/longngx04/urllib3_knowledge_crawler/pull/13)).
 
-| Sự cố | Hệ quả | Cách khắc phục |
-|---|---|---|
-| CLI không nạp `.env` (chỉ đọc `os.getenv`) | `GITHUB_TOKEN` bị bỏ qua → đụng rate limit GitHub | Thêm `crawler/utils/envfile.py` nạp allowlist (`GITHUB_TOKEN`, `NVD_API_KEY`, `CRAWLER_OFFLINE`); biến môi trường shell vẫn ưu tiên; token không được in ra |
-| Tag trùng `v2.0.5` / `2.0.5` | `map_tags_to_versions` dừng với lỗi | Giữ tag ưu tiên (dạng `v`-prefix trước dạng thuần số) |
-| OSV `fixed` là commit SHA (khoảng `GIT`) | Pydantic báo lỗi PEP 440 khi đưa vào `fixed_versions` | Chỉ giá trị hợp PEP 440 vào `events`/`fixed_versions`; commit SHA chuyển vào `patch_commits` |
+
+| Sự cố                                      | Hệ quả                                                | Cách khắc phục                                                                                                                                              |
+| ------------------------------------------ | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CLI không nạp `.env` (chỉ đọc `os.getenv`) | `GITHUB_TOKEN` bị bỏ qua → đụng rate limit GitHub     | Thêm `crawler/utils/envfile.py` nạp allowlist (`GITHUB_TOKEN`, `NVD_API_KEY`, `CRAWLER_OFFLINE`); biến môi trường shell vẫn ưu tiên; token không được in ra |
+| Tag trùng `v2.0.5` / `2.0.5`               | `map_tags_to_versions` dừng với lỗi                   | Giữ tag ưu tiên (dạng `v`-prefix trước dạng thuần số)                                                                                                       |
+| OSV `fixed` là commit SHA (khoảng `GIT`)   | Pydantic báo lỗi PEP 440 khi đưa vào `fixed_versions` | Chỉ giá trị hợp PEP 440 vào `events`/`fixed_versions`; commit SHA chuyển vào `patch_commits`                                                                |
+
 
 Ngoài ra, lệnh `run` bắt thêm `ValueError` / `OSError` để báo lỗi gọn thay vì đổ traceback
 đầy đủ.
@@ -363,31 +380,35 @@ python -m crawler query --package urllib3 --version 2.4.0 --output data
 
 ## 15. Tính tái lập và kiểm chứng chất lượng
 
-| Cơ chế | Tác dụng |
-|---|---|
-| JSONL sắp thứ tự xác định | Input giống nhau → `record_id` và nội dung giống nhau; diff giữa hai lần crawl là diff ngữ nghĩa |
-| `data/manifest.json` | Lưu SHA-256 từng file xuất ra; kiểm tra toàn vẹn mà không cần chạy lại pipeline |
-| `data/raw/` cache theo nội dung | `--skip-crawl` cho phép chạy lại từ bước chuẩn hoá mà không gọi mạng |
-| Bộ test offline | **244 test** trên Python 3.12.3; kiểm tra tính xác định tại `tests/test_deterministic_pipeline.py` |
+
+| Cơ chế                          | Tác dụng                                                                                           |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| JSONL sắp thứ tự xác định       | Input giống nhau → `record_id` và nội dung giống nhau; diff giữa hai lần crawl là diff ngữ nghĩa   |
+| `data/manifest.json`            | Lưu SHA-256 từng file xuất ra; kiểm tra toàn vẹn mà không cần chạy lại pipeline                    |
+| `data/raw/` cache theo nội dung | `--skip-crawl` cho phép chạy lại từ bước chuẩn hoá mà không gọi mạng                               |
+| Bộ test offline                 | **244 test** trên Python 3.12.3; kiểm tra tính xác định tại `tests/test_deterministic_pipeline.py` |
+
 
 **Cổng chất lượng đã chạy ở lần cập nhật này:** `pytest` (244 passed) · `ruff check` ·
 `ruff format --check` · `mypy crawler` — toàn bộ đạt.
 
 ---
 
-## 16. Hạn chế còn tồn tại và đề xuất xử lý
+## 16. Hạn chế còn tồn tại 
 
 Xếp theo mức ảnh hưởng tới chất lượng phán quyết SAST:
 
-| Ưu tiên | Hạn chế | Đề xuất |
-|---|---|---|
-| P0 | Khoảng `GIT` mở làm phình `advisory.affected_versions` (7/19 advisory; `range_resolution_rate` = 0.632) | Không chiếu khoảng `GIT` lên danh mục PyPI, hoặc bỏ qua khi đã có khoảng `ECOSYSTEM` |
-| P0 | Nhiễu khi rút symbol từ diff (gán tên hàm test vào module nguồn) | Tách symbol theo file gốc (`src/` vs `test/`); không suy tên module từ file test |
-| P1 | `upgrade_guidance` không theo nhánh bảo trì | Xuất khuyến nghị riêng cho từng nhánh (1.x / 2.x) |
-| P1 | 3 pattern `version_only` thiếu điều kiện sử dụng | Giữ ở mức SCA cho đến khi có bằng chứng patch |
-| P2 | Endpoint list GitHub chỉ lấy trang đầu (nếu chưa mở rộng) | Mở rộng phân trang để nâng `version_coverage` |
-| P2 | Rút symbol không phải phân tích liên thủ tục | Định vị là tín hiệu cho engine SAST, không thay thế data-flow analysis |
-| P2 | Nhánh NVD chưa bật mặc định | CWE/CVSS hiện lấy từ OSV; kích hoạt NVD khi cần bổ sung |
+
+| Ưu tiên | Hạn chế                                                                                                 | Đề xuất                                                                              |
+| ------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| P0      | Khoảng `GIT` mở làm phình `advisory.affected_versions` (7/19 advisory; `range_resolution_rate` = 0.632) | Không chiếu khoảng `GIT` lên danh mục PyPI, hoặc bỏ qua khi đã có khoảng `ECOSYSTEM` |
+| P0      | Nhiễu khi rút symbol từ diff (gán tên hàm test vào module nguồn)                                        | Tách symbol theo file gốc (`src/` vs `test/`); không suy tên module từ file test     |
+| P1      | `upgrade_guidance` không theo nhánh bảo trì                                                             | Xuất khuyến nghị riêng cho từng nhánh (1.x / 2.x)                                    |
+| P1      | 3 pattern `version_only` thiếu điều kiện sử dụng                                                        | Giữ ở mức SCA cho đến khi có bằng chứng patch                                        |
+| P2      | Endpoint list GitHub chỉ lấy trang đầu (nếu chưa mở rộng)                                               | Mở rộng phân trang để nâng `version_coverage`                                        |
+| P2      | Rút symbol không phải phân tích liên thủ tục                                                            | Định vị là tín hiệu cho engine SAST, không thay thế data-flow analysis               |
+| P2      | Nhánh NVD chưa bật mặc định                                                                             | CWE/CVSS hiện lấy từ OSV; kích hoạt NVD khi cần bổ sung                              |
+
 
 ---
 
@@ -395,26 +416,26 @@ Xếp theo mức ảnh hưởng tới chất lượng phán quyết SAST:
 
 1. Thêm `configs/<package>.yaml` khai báo định danh package, repository và nguồn được bật.
 2. Tái sử dụng nguyên tầng retrieval, model, resolver, exporter và CLI — không cần sửa code
-   lõi.
+  lõi.
 3. Điều chỉnh heuristic đọc changelog/commit nếu repo đích dùng quy ước khác (`urllib3` dùng
-   `CHANGES.rst`).
+  `CHANGES.rst`).
 4. Chạy lại validate và thống kê **trước khi** công bố độ phủ; các chỉ số ở mục 12 chỉ đúng
-   cho `urllib3`.
+  cho `urllib3`.
 
 ---
 
 ## 18. Bài học vận hành
 
 1. **Vertical slice trước, mở rộng bề rộng sau.** Đi hết một đường end-to-end giúp phát hiện
-   lỗ hợp đồng dữ liệu khi chi phí sửa còn thấp.
+  lỗ hợp đồng dữ liệu khi chi phí sửa còn thấp.
 2. **Fixture không thay thế dữ liệu thật.** Bộ test offline đạt 100% vẫn không ngăn ba lỗi
-   runtime lộ ra trên crawl live (tag trùng, commit SHA trong `fixed`, `.env` không được nạp).
+  runtime lộ ra trên crawl live (tag trùng, commit SHA trong `fixed`, `.env` không được nạp).
 3. **Validate nghiêm chặt mang lại tín hiệu hành động.** 7 lỗi `contradictory_ranges` chỉ đúng
-   chỗ cần sửa; nếu tầng validate “dễ tính”, lỗi sẽ âm thầm đi vào kết quả phán quyết.
+  chỗ cần sửa; nếu tầng validate “dễ tính”, lỗi sẽ âm thầm đi vào kết quả phán quyết.
 4. **Tách khoảng SCA khỏi điều kiện sử dụng SAST là insight cốt lõi.** Giá trị của hệ thống
-   bắt nguồn từ ranh giới này.
+  bắt nguồn từ ranh giới này.
 5. **`--offline --fixture-dir` là yêu cầu bắt buộc cho CI**, không chỉ là tiện ích phát triển —
-   không có nó thì pipeline phụ thuộc mạng và dễ đỏ vì rate limit thay vì vì lỗi code.
+  không có nó thì pipeline phụ thuộc mạng và dễ đỏ vì rate limit thay vì vì lỗi code.
 
 ---
 
@@ -430,12 +451,14 @@ thu hẹp vượt mức so-version thuần.
 
 ### Khuyến nghị hành động tiếp theo
 
-| Ưu tiên | Hành động | Mục tiêu |
-|---|---|---|
-| 1 | Sửa xử lý khoảng OSV loại `GIT` mở | Nâng `range_resolution_rate` và loại 7 lỗi `contradictory_ranges` |
-| 2 | Làm sạch rút symbol từ diff | Giảm nhiễu symbol test trong security pattern |
-| 3 | Xuất `upgrade_guidance` theo nhánh bảo trì | Tránh khuyến nghị nâng cấp sai nhánh |
-| 4 | Review thủ công case study live trước khi dùng ngoài nội bộ | Bảo đảm chất lượng trình bày cho stakeholder bên ngoài |
+
+| Ưu tiên | Hành động                                                   | Mục tiêu                                                          |
+| ------- | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| 1       | Sửa xử lý khoảng OSV loại `GIT` mở                          | Nâng `range_resolution_rate` và loại 7 lỗi `contradictory_ranges` |
+| 2       | Làm sạch rút symbol từ diff                                 | Giảm nhiễu symbol test trong security pattern                     |
+| 3       | Xuất `upgrade_guidance` theo nhánh bảo trì                  | Tránh khuyến nghị nâng cấp sai nhánh                              |
+| 4       | Review thủ công case study live trước khi dùng ngoài nội bộ | Bảo đảm chất lượng trình bày cho stakeholder bên ngoài            |
+
 
 Nền tảng provenance, tính xác định và cổng validate hiện đã đủ vững để các cải thiện trên được
 đo bằng chỉ số, không phụ thuộc đánh giá cảm tính.
