@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Protocol
 
 from crawler.normalizers.patches import PatchInventory
+from crawler.normalizers.patterns import SecurityPatternInventory
 from crawler.normalizers.versions import VersionInventory
 from crawler.validators.versions import validate_version_inventory
 
@@ -25,6 +26,10 @@ class VersionExportError(JsonlExportError):
 
 class PatchExportError(JsonlExportError):
     """Raised when a patch inventory cannot be exported safely."""
+
+
+class SecurityPatternExportError(JsonlExportError):
+    """Raised when a security-pattern inventory cannot be exported safely."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -144,12 +149,34 @@ def export_patch_inventory(
     )
 
 
+def export_security_pattern_inventory(
+    inventory: SecurityPatternInventory, output_directory: Path
+) -> JsonlExportResult:
+    """Atomically write security patterns to fixed ``security_patterns.jsonl``."""
+    payload = _jsonl_bytes_from_records(inventory.records)
+    output_path = _atomic_write_jsonl(
+        payload,
+        output_directory,
+        "security_patterns.jsonl",
+        ".security_patterns.",
+        "security_pattern",
+        SecurityPatternExportError,
+    )
+    return JsonlExportResult(
+        path=output_path,
+        sha256=hashlib.sha256(payload).hexdigest(),
+        record_count=len(inventory.records),
+    )
+
+
 __all__ = [
     "JsonlExportError",
     "JsonlExportResult",
     "PatchExportError",
+    "SecurityPatternExportError",
     "VersionExportError",
     "VersionExportResult",
     "export_patch_inventory",
+    "export_security_pattern_inventory",
     "export_version_inventory",
 ]

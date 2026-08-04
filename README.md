@@ -6,7 +6,7 @@ pipeline will connect package versions and authoritative advisories to relevant 
 configuration, data-flow conditions, negative conditions, patches, and regression
 tests.
 
-## Current scope (Phases 0–7)
+## Current scope (Phases 0–8)
 
 Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
 configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
@@ -28,10 +28,12 @@ inventory. Phase 5 collects OSV advisories and merges explicitly linked alias cl
 Phase 6 resolves advisory ranges against the PyPI inventory into deterministic affected-
 version lists; see [`docs/range_resolution.md`](docs/range_resolution.md). Phase 7
 enriches advisories with official commit diff evidence and regression-test paths; see
-[`docs/patch_enrichment.md`](docs/patch_enrichment.md).
+[`docs/patch_enrichment.md`](docs/patch_enrichment.md). Phase 8 extracts SAST-oriented
+security patterns from advisories and patch evidence; see
+[`docs/security_patterns.md`](docs/security_patterns.md).
 
-The project still intentionally does **not** implement security-semantic extraction,
-NVD, pipeline CLI crawl commands, global `stats.json` export, or query behavior.
+The project still intentionally does **not** implement KB document generation, NVD,
+pipeline CLI crawl commands, global `stats.json` export, or query behavior.
 Current CLI commands do not contact the network or read credentials; default tests
 exercise retrieval and source adapters offline with fixtures.
 
