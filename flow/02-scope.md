@@ -46,9 +46,9 @@ When a C feature is the real need, three honest paths:
 
 ## Time budget
 
-One focused implementation session per approved phase. Phases 0–2 are complete; this
-amendment authorizes one focused implementation session for the Phase 3 PyPI version
-inventory.
+One focused implementation session per approved phase. Phases 0–5 are complete on their
+feature branches; this amendment authorizes one focused implementation session for the
+Phase 6 version-range resolution slice.
 
 ## Features in v1 (each with impact AND grade)
 
@@ -70,6 +70,9 @@ inventory.
 - PyPI project adapter that retrieves authoritative project JSON through the shared raw-cache boundary — impact H (the first real source is required for the version-aware product promise) — grade A (one bounded provider adapter).
 - PEP 440 release normalizer that preserves artifacts, provenance, prerelease/yanked state, release dates, and Python requirements — impact H (all later range and advisory work depends on an accurate version inventory) — grade B (untrusted nested metadata and release-level aggregation rules).
 - Deterministic version validation/export with explicit unparsable-version reporting and inventory statistics — impact H (downstream consumers need auditable, duplicate-free JSONL) — grade B (atomic output plus semantic validation and reproducibility checks).
+- Version-range resolver that evaluates OSV events and PEP 440 specifiers against the PyPI inventory — impact H (SAST applicability requires exact affected releases, not opaque range strings) — grade B (PEP 440 boundary semantics plus conflict reporting).
+- Deterministic resolved affected-version lists with preserved raw ranges and fixed-version verification — impact H (downstream patterns must not invent fixed releases) — grade A (pure projection onto an existing inventory).
+- Range-resolution coverage metrics and typed invalid/contradictory/unresolvable issue reports — impact M (operators need measurable completeness without silent skips) — grade A (stats and structured diagnostics).
 
 ## Suggested features (impact-first — proposed, not decided)
 
@@ -87,11 +90,13 @@ decision.
 
 - Domain models and JSON Schemas were deferred from Phase 0 and are now included in the approved Phase 1 amendment.
 - HTTP, cache, retry, and raw storage were deferred from earlier phases and are now included in the approved Phase 2 amendment.
-- GitHub, OSV, GHSA, and NVD crawling — deferred to Phases 4–5; the PyPI source is now included in the approved Phase 3 amendment.
-- Range and alias resolution, patch/test enrichment, security patterns, KB documents, statistics, and real query behavior — deferred to Phases 6–13.
+- GitHub, OSV, and GHSA crawling plus alias resolution are included through Phase 5; NVD remains optional and deferred.
+- Version-range resolution is now included in the approved Phase 6 amendment.
+- Patch/test enrichment, security patterns, KB documents, global statistics export, and real query behavior — deferred to Phases 7–13.
 - CI, containerization, deployment, dashboard, vector database, multi-package support, and LLM enrichment — deferred until a validated vertical slice justifies them.
 
 ## Decision
 
-GO — Phases 0–2 established the package, data contracts, and secure retrieval seam.
-Phase 3 uses that seam for one authoritative PyPI-to-validated-JSONL vertical slice.
+GO — Phases 0–5 established packages, contracts, retrieval, PyPI inventory, GitHub/
+changelog correlation, and advisory alias clusters. Phase 6 resolves those advisory
+ranges against the inventory into deterministic affected-version lists.

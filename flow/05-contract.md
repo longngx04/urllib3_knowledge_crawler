@@ -64,6 +64,8 @@ Function/—/Access(=none)/Args/Return. The shared column below is "Access/Effec
 | PyPI version normalizer | `crawler.normalizers.versions.normalize_pypi_versions` | Pure after receiving exact retrieved bytes; no network or filesystem effects | `response: RetrievedResponse`; expected `PackageRecord` | Frozen `VersionInventory(records, unparsable_versions, stats)`; one provenance-backed record per unique parsable release, PEP 440 sorted; malformed/wrong-project/unsafe artifact metadata and normalized collisions raise typed errors. |
 | Version inventory validator | `crawler.validators.versions.validate_version_inventory` | Pure; no I/O | Iterable of `VersionRecord` plus expected `PackageRecord` | Tuple of validated records in PEP 440 order; duplicate normalized versions/record IDs, package mismatches, inconsistent prerelease flags, unsafe artifact metadata, malformed dates/digests, or ordering violations raise `VersionInventoryValidationError`. |
 | Version JSONL exporter | `crawler.exporters.jsonl.export_version_inventory` | Atomically writes only fixed `versions.jsonl` below a caller-selected non-symlink output directory | Valid `VersionInventory`; `output_directory: Path` | `VersionExportResult(path, sha256, record_count)`; UTF-8 one-record-per-line JSON with canonical keys and PEP 440 order; repeated equivalent input produces identical bytes. |
+| Version-range resolver | `crawler.resolvers.ranges.resolve_advisory_ranges` | Pure; no network or filesystem effects | Sequence of `AdvisoryRecord` plus `VersionInventory` | `RangeResolutionResult(advisories, issues, stats)`; each range keeps `raw`/`events`, gains PEP 440-sorted `resolved`; advisories gain unioned `affected_versions`; invalid/missing-fixed/contradictory/unresolvable cases are reported without inventing fixed releases. |
+| Event/specifier matchers | `version_matches_events`, `version_matches_specifier`, `resolve_version_range` | Pure; no I/O | PEP 440 `Version` plus events or specifier/`VersionRange` and inventory versions | Boolean match or `(resolved_versions, error)`; OSV `0` means beginning; open-ended bounds, prereleases, and disjoint ranges are supported; invalid boundaries return an actionable error. |
 
 ## Shared shapes (objects used by multiple interfaces)
 
@@ -176,6 +178,23 @@ VersionInventoryStats:
   total_yanked_versions: non-negative int
   total_artifacts: non-negative int
   total_unparsable_versions: non-negative int
+
+RangeResolutionStats:
+  total_advisories: non-negative int
+  resolvable_advisories: non-negative int
+  unresolvable_advisories: non-negative int
+  total_ranges: non-negative int
+  resolved_ranges: non-negative int
+  invalid_ranges: non-negative int
+  missing_fixed_versions: non-negative int
+  contradictory_ranges: non-negative int
+  coverage_ratio: float in [0, 1]
+
+RangeResolutionIssue:
+  advisory_id: non-empty str
+  kind: invalid_range | missing_fixed_version | contradictory_ranges | unresolvable
+  message: non-empty str
+  range_index: non-negative int | null
 ```
 
 ## Feature → interface map
@@ -203,3 +222,7 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR18 → PyPI version normalizer and `DistributionArtifact` shared shape.
 - FR19 → PyPI version normalizer, version inventory validator, and version JSONL exporter.
 - FR20 → PyPI version normalizer, `VersionInventoryStats`, and version JSONL exporter.
+- FR29 → version-range resolver and event/specifier matchers.
+- FR30 → version-range resolver and `VersionRange` shared shape.
+- FR31 → version-range resolver issue reporting for missing fixed versions and contradictions.
+- FR32 → `RangeResolutionStats` and typed `RangeResolutionIssue` reports.

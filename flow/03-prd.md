@@ -25,6 +25,12 @@ is preserved as raw evidence, normalized into PEP 440 version records, validated
 exported deterministically. It does not add GitHub correlation, advisories, ranges, or
 new CLI pipeline commands.
 
+Phase 6 resolves advisory version ranges against that PyPI inventory. It evaluates
+OSV-style events and PEP 440 specifier expressions, writes deterministic affected-version
+lists, verifies fixed versions without inventing them, and reports invalid or
+contradictory ranges. It does not add patch enrichment, security semantics, or pipeline
+CLI commands.
+
 ## Target users
 
 - VinSOC AppSec/SAST analysts who need evidence-backed applicability verdicts.
@@ -56,10 +62,13 @@ it; if a pain has no feature, it goes to the "not addressed" list — honestly.
 | P15 | Detection-content engineer | There is no authoritative machine-readable inventory of urllib3 releases and distributions. | Phase 3 checklist in `.agents/implementation_plan.md`. | Inspect PyPI manually or compare version strings incorrectly. | FR17, FR18 | One preserved PyPI response produces provenance-backed PEP 440 records for every parsable release and distribution. |
 | P16 | Pipeline maintainer | Malformed, duplicate-normalized, or wrong-project PyPI metadata could silently corrupt later range resolution. | Version validation and untrusted-input rules in `.agents/context.md` and `.agents/rules.md`. | Trust provider JSON without semantic checks. | FR19 | Invalid project identity, artifacts, digests, dates, or normalized collisions fail with actionable typed errors before export. |
 | P17 | Crawler operator | Unparsable versions and inventory coverage are invisible, and output ordering can vary by source order. | Phase 3 statistics/determinism requirements in `.agents/implementation_plan.md`. | Count and sort releases manually. | FR20 | Deterministic JSONL plus explicit totals and unparsable-version reporting are available from the inventory result. |
+| P18 | Detection-content engineer | Advisory records still carry opaque range events or specifier strings instead of exact urllib3 releases. | Phase 6 checklist in `.agents/implementation_plan.md`. | Manually compare ranges to PyPI versions. | FR29, FR30 | Every resolvable advisory yields a deterministic PEP 440 affected-version list while preserving raw ranges. |
+| P19 | Security analyst | Missing or invented fixed versions and contradictory range claims can silently corrupt applicability verdicts. | Unknown-value and conflict rules in `.agents/context.md` and `.agents/rules.md`. | Spot-check fixed releases by hand. | FR31 | Missing fixed versions and contradictory overlaps are reported; fixed releases are never invented. |
+| P20 | Pipeline operator | Range-resolution completeness is invisible when some advisories fail to resolve. | Phase 6 coverage/metrics acceptance criteria in `.agents/implementation_plan.md`. | Count failures after export. | FR32 | Coverage metrics and typed invalid/unresolvable issue reports are available from the resolution result. |
 
 ### Pains NOT addressed in v1 (deliberate — tie to the scope cut list)
 
-- Analysts still perform manual vulnerability applicability analysis → deferred because models, source clients, range resolution, and security-semantic enrichment belong to Phases 1–9.
+- Analysts still perform manual vulnerability applicability analysis → deferred because patch enrichment and security-semantic extraction belong to Phases 7–9.
 - Maintainers still lack automated CI and a published artifact → deferred until local bootstrap behavior is stable and a delivery platform is selected.
 
 ## Problem statement
@@ -92,6 +101,10 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR18: As a detection-content engineer, I normalize a retrieved PyPI response, and I receive one provenance-backed `VersionRecord` per unique parsable PEP 440 release with every distribution artifact, release date, Python requirement, prerelease state, and yanked evidence preserved without invented values.
 - FR19: As a pipeline maintainer, I process untrusted PyPI metadata, and wrong-project responses, unsafe artifact paths/URLs, malformed digests/dates/types, and duplicate normalized versions fail explicitly before deterministic JSONL is written atomically.
 - FR20: As a crawler operator, I inspect a version inventory and its exported JSONL, and records are PEP 440 sorted while totals for versions, prereleases, yanked releases, artifacts, and detected unparsable release keys are deterministic.
+- FR29: As a detection-content engineer, I resolve advisory ranges against the PyPI inventory, and each resolvable range yields a deterministic PEP 440-sorted `resolved` list using OSV events or specifier expressions without string version comparison.
+- FR30: As a pipeline maintainer, I inspect a resolved advisory, and raw range evidence plus ordered events remain intact while `affected_versions` unions explicit source versions with inventory matches.
+- FR31: As a security analyst, I review fixed-version claims, and missing inventory matches or overlaps between fixed and affected sets are reported without inventing fixed releases.
+- FR32: As a crawler operator, I inspect range-resolution stats and issues, and I receive coverage counts for resolvable/unresolvable advisories plus typed invalid, missing-fixed, and contradictory reports.
 
 ## Non-functional requirements
 
