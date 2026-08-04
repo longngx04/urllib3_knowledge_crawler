@@ -54,6 +54,7 @@ data/normalized/**
 data/kb/**
 data/manifest.json
 data/stats.json
+data/validation_errors.json
 !data/raw/.gitkeep
 !data/normalized/.gitkeep
 !data/kb/.gitkeep

@@ -99,6 +99,9 @@ def _parse_datetime(value: Any) -> datetime | None:
         return None
 
 
+_COMMIT_SHA_PATTERN = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$", re.IGNORECASE)
+
+
 def _clean_pep440(version_str: str) -> str | None:
     if not isinstance(version_str, str) or not version_str.strip():
         return None
@@ -106,6 +109,22 @@ def _clean_pep440(version_str: str) -> str | None:
         return str(Version(version_str.strip()))
     except InvalidVersion:
         return None
+
+
+def _boundary_for_event(raw_value: object) -> tuple[str | None, str | None]:
+    """Return ``(pep440_or_zero, commit_sha)`` for one OSV range boundary."""
+
+    if not isinstance(raw_value, str) or not raw_value.strip():
+        return None, None
+    cleaned = raw_value.strip()
+    if cleaned == "0":
+        return "0", None
+    pep440 = _clean_pep440(cleaned)
+    if pep440 is not None:
+        return pep440, None
+    if _COMMIT_SHA_PATTERN.fullmatch(cleaned):
+        return None, cleaned.lower()
+    return None, None
 
 
 def normalize_osv_vulnerability(
@@ -215,7 +234,7 @@ def normalize_osv_vulnerability(
                 references_list.append(ref["url"].strip())
 
     sorted_refs = sorted(set(references_list))
-    patch_commits = extract_commit_shas(sorted_refs)
+    patch_commit_set = set(extract_commit_shas(sorted_refs))
 
     # Affected ranges & versions
     affected_ranges: list[VersionRange] = []
@@ -262,33 +281,33 @@ def normalize_osv_vulnerability(
                         if not isinstance(ev, dict):
                             continue
                         if "introduced" in ev:
-                            intro_v = (
-                                _clean_pep440(ev["introduced"])
-                                or str(ev["introduced"]).strip()
+                            intro_v, intro_commit = _boundary_for_event(
+                                ev["introduced"]
                             )
-                            if intro_v:
+                            if intro_v is not None:
                                 events.append(VersionEvent(introduced=intro_v))
+                            if intro_commit is not None:
+                                patch_commit_set.add(intro_commit)
                         elif "fixed" in ev:
-                            fix_v = (
-                                _clean_pep440(ev["fixed"]) or str(ev["fixed"]).strip()
-                            )
-                            if fix_v:
+                            fix_v, fix_commit = _boundary_for_event(ev["fixed"])
+                            if fix_v is not None:
                                 events.append(VersionEvent(fixed=fix_v))
                                 range_fixed.add(fix_v)
                                 fixed_versions_set.add(fix_v)
+                            if fix_commit is not None:
+                                patch_commit_set.add(fix_commit)
                         elif "last_affected" in ev:
-                            la_v = (
-                                _clean_pep440(ev["last_affected"])
-                                or str(ev["last_affected"]).strip()
-                            )
-                            if la_v:
+                            la_v, la_commit = _boundary_for_event(ev["last_affected"])
+                            if la_v is not None:
                                 events.append(VersionEvent(last_affected=la_v))
+                            if la_commit is not None:
+                                patch_commit_set.add(la_commit)
                         elif "limit" in ev:
-                            lim_v = (
-                                _clean_pep440(ev["limit"]) or str(ev["limit"]).strip()
-                            )
-                            if lim_v:
+                            lim_v, lim_commit = _boundary_for_event(ev["limit"])
+                            if lim_v is not None:
                                 events.append(VersionEvent(limit=lim_v))
+                            if lim_commit is not None:
+                                patch_commit_set.add(lim_commit)
 
                     if events:
                         affected_ranges.append(
@@ -298,6 +317,8 @@ def normalize_osv_vulnerability(
                                 fixed_versions=sorted(range_fixed),
                             )
                         )
+
+    patch_commits = sorted(patch_commit_set)
 
     package = PackageRecord(
         name=package_name,

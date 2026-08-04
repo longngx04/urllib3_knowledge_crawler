@@ -110,3 +110,37 @@ def test_normalize_osv_vulnerability_cve_fixture(dummy_provenance, advisory_sche
 def test_normalize_osv_vulnerability_missing_id(dummy_provenance):
     with pytest.raises(AdvisoryNormalizationError, match="missing 'id'"):
         normalize_osv_vulnerability({}, provenance=dummy_provenance)
+
+
+def test_normalize_osv_vulnerability_commit_fixed_not_version(
+    dummy_provenance: ProvenanceRecord, advisory_schema: dict
+) -> None:
+    payload = {
+        "id": "GHSA-test-commit-fixed",
+        "summary": "fixed by commit only",
+        "aliases": [],
+        "affected": [
+            {
+                "package": {"name": "urllib3", "ecosystem": "PyPI"},
+                "ranges": [
+                    {
+                        "type": "GIT",
+                        "events": [
+                            {"introduced": "0"},
+                            {"fixed": "1dd69c5c5982fae7c87a620d487c2ebf7a6b436b"},
+                        ],
+                    }
+                ],
+            }
+        ],
+        "references": [],
+    }
+    record = normalize_osv_vulnerability(payload, provenance=dummy_provenance)
+    assert record.fixed_versions == []
+    assert "1dd69c5c5982fae7c87a620d487c2ebf7a6b436b" in record.patch_commits
+    assert record.affected_ranges[0].events[0].introduced == "0"
+    assert len(record.affected_ranges[0].events) == 1
+    jsonschema.validate(
+        instance=json.loads(record.model_dump_json(by_alias=True)),
+        schema=advisory_schema,
+    )

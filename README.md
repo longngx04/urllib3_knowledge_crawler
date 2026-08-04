@@ -45,11 +45,41 @@ This crawler turns public urllib3 evidence into that structured knowledge.
 
 Optional NVD enrichment remains out of the default path.
 
+## Quick start (clone → first successful run)
+
+```bash
+git clone https://github.com/longngx04/urllib3_knowledge_crawler.git
+cd urllib3_knowledge_crawler
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+
+# 1) Prove the install offline (no network, no token)
+python -m crawler run \
+  --config configs/urllib3.yaml \
+  --output /tmp/urllib3-kb-offline \
+  --offline \
+  --fixture-dir tests/fixtures/pipeline
+
+# 2) Optional live crawl into ./data (network required)
+cp .env.example .env
+# edit .env and set GITHUB_TOKEN=ghp_...  (recommended; never commit .env)
+python -m crawler run --config configs/urllib3.yaml --output data
+ls data/kb/documents.jsonl data/normalized/*.jsonl data/stats.json
+```
+
+The CLI automatically loads allowlisted keys from a local `.env`
+(`GITHUB_TOKEN`, `NVD_API_KEY`, `CRAWLER_OFFLINE`). You do **not** need to
+`export` them manually if they are present in `.env`. Shell exports still win
+over `.env` values.
+
 ## Requirements
 
 - CPython **3.11+** (verified on **3.12**)
 - Network only for live crawls (PyPI, GitHub, OSV)
-- Optional `GITHUB_TOKEN` for higher GitHub API rate limits
+- Optional `GITHUB_TOKEN` for higher GitHub API rate limits (strongly recommended
+  for live runs; unauthenticated GitHub allows only 60 requests/hour)
 
 ## Install
 
@@ -70,6 +100,7 @@ Verify:
 python -m crawler --help
 python -m crawler --version
 # expected: urllib3-knowledge-crawler 0.1.0
+pytest -q
 ```
 
 ## Configuration
@@ -78,14 +109,16 @@ Package identity and crawl toggles: [`configs/urllib3.yaml`](configs/urllib3.yam
 
 ```bash
 cp .env.example .env
-export GITHUB_TOKEN=ghp_...   # optional; never commit
+# put the token in .env — the CLI loads it automatically:
+# GITHUB_TOKEN=ghp_...
 ```
 
 Rules:
 
-- secrets only in environment / ignored `.env`
+- secrets only in environment / ignored `.env` (never commit `.env`)
 - never log, cache, or persist authorization headers
 - `NVD_API_KEY` is reserved for optional later enrichment
+- generated trees under `data/` are gitignored (only `.gitkeep` markers are tracked)
 
 ## How to run (detailed)
 
@@ -167,22 +200,33 @@ evidence, and confidence.
 
 ### D. Live crawl (operator)
 
-Requires network. Prefer setting `GITHUB_TOKEN`.
+Requires network. Put `GITHUB_TOKEN` in `.env` (auto-loaded) or export it.
 
 ```bash
-export GITHUB_TOKEN=...   # optional but recommended
-python -m crawler run \
-  --config configs/urllib3.yaml \
-  --output data
+cp .env.example .env
+# GITHUB_TOKEN=ghp_...   # edit .env; recommended for rate limits
+python -m crawler run --config configs/urllib3.yaml --output data
+ls data/kb/documents.jsonl data/normalized/*.jsonl data/stats.json
 ```
 
-Re-run with cache hits:
+Re-run with cache hits (no new network if raw cache is warm):
 
 ```bash
 python -m crawler run --config configs/urllib3.yaml --output data --skip-crawl
 ```
 
-Do **not** commit generated `data/` trees.
+Do **not** commit generated `data/` trees (they are gitignored).
+
+### Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `GITHUB_TOKEN` ignored after editing `.env` | Run from the repo root so `.env` is discovered; or `export GITHUB_TOKEN=...`. Confirm with a non-printing check: `python -c "from crawler.utils.envfile import load_default_env_files; import os; load_default_env_files(); print(bool(os.getenv('GITHUB_TOKEN')))"` |
+| GitHub HTTP 403 / rate limit | Set a PAT in `.env`; wait for reset; reuse `--skip-crawl` / warm `data/raw` |
+| Duplicate tag errors historically | Fixed: tags like `v2.0.5` and `2.0.5` now keep the preferred `v`-prefix tag |
+| OSV `fixed` is a commit SHA | Fixed: commit boundaries go to `patch_commits`, not `fixed_versions` |
+| `data/kb` empty | You only ran Phase-3 version export, or wrote outputs under `/tmp/...`. Use `--output data` and a full `run` |
+| `pytest` wants network | Default tests are offline; do not set `CRAWLER_OFFLINE` incorrectly for unit tests |
 
 ## Quality gate
 
@@ -194,7 +238,7 @@ ruff format --check .
 mypy crawler
 ```
 
-At Phase 13 merge tip, the offline suite reports **238 passed**.
+Current offline suite: **244 passed** (after live-crawl hardening).
 
 ## What gets crawled (and how)
 

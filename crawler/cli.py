@@ -26,7 +26,11 @@ from crawler.pipeline import (
     stage_stats,
     stage_validate,
 )
+from crawler.utils.envfile import load_default_env_files
 from crawler.validators.findings import PipelineValidationError
+
+# Load ignored local `.env` before any command reads credentials.
+load_default_env_files()
 
 PROGRAM_NAME = "urllib3-knowledge-crawler"
 PROGRAM_PURPOSE = "Build version-aware urllib3 security knowledge for AI-assisted SAST."
@@ -398,7 +402,13 @@ def run_command(
     )
     try:
         run_pipeline(state, skip_crawl=skip_crawl)
-    except (PipelineError, PipelineValidationError, AssertionError) as error:
+    except (
+        PipelineError,
+        PipelineValidationError,
+        AssertionError,
+        ValueError,
+        OSError,
+    ) as error:
         typer.echo(f"run failed: {error}", err=True)
         raise typer.Exit(EXIT_VALIDATION_FAILURE) from error
     version_count = (

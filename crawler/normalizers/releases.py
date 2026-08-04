@@ -86,6 +86,17 @@ def _try_parse_tag(raw_tag: str) -> tuple[Version, str, float] | None:
     return None
 
 
+def _tag_preference(mapping: TagMapping) -> tuple[float, int, str]:
+    """Higher tuples win when two tags normalize to the same version."""
+
+    match_rank = {
+        "v_prefix": 3,
+        "exact": 2,
+        "release_prefix": 1,
+    }.get(mapping.match_type, 0)
+    return (mapping.confidence, match_rank, mapping.raw_tag)
+
+
 def map_tags_to_versions(
     tags_json: list[dict[str, Any]], expected_repo: str
 ) -> tuple[TagMapping, ...]:
@@ -93,9 +104,11 @@ def map_tags_to_versions(
 
     Tags that cannot be parsed as PEP 440 are silently skipped.
     Commit SHAs must be exactly 40 lowercase hexadecimal characters.
+    When multiple tags normalize to the same version (for example ``v2.0.5`` and
+    ``2.0.5``), keep the preferred tag deterministically instead of failing the crawl.
     """
-    mappings: list[TagMapping] = []
-    seen_versions: dict[str, str] = {}
+    del expected_repo  # reserved for future ownership checks
+    chosen: dict[str, TagMapping] = {}
 
     for tag_data in tags_json:
         raw_tag = tag_data.get("name")
@@ -117,26 +130,21 @@ def map_tags_to_versions(
 
         parsed_version, match_type, confidence = result
         normalized = str(parsed_version)
-
-        previous_tag = seen_versions.get(normalized)
-        if previous_tag is not None:
-            raise ReleaseNormalizationError(
-                f"tags {previous_tag!r} and {raw_tag!r} both resolve to "
-                f"version {normalized!r}"
-            )
-        seen_versions[normalized] = raw_tag
-
-        mappings.append(
-            TagMapping(
-                raw_tag=raw_tag,
-                normalized_version=normalized,
-                commit_sha=commit_sha,
-                match_type=match_type,
-                confidence=confidence,
-            )
+        candidate = TagMapping(
+            raw_tag=raw_tag,
+            normalized_version=normalized,
+            commit_sha=commit_sha,
+            match_type=match_type,
+            confidence=confidence,
         )
+        previous = chosen.get(normalized)
+        if previous is None or _tag_preference(candidate) > _tag_preference(previous):
+            chosen[normalized] = candidate
 
-    mappings.sort(key=lambda m: Version(m.normalized_version))
+    mappings = sorted(
+        chosen.values(),
+        key=lambda item: Version(item.normalized_version),
+    )
     return tuple(mappings)
 
 

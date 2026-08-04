@@ -14,24 +14,10 @@ enriches selected advisories with patch and regression-test evidence, emits SAST
 security patterns and retrieval documents, and validates results with reproducible
 statistics.
 
-**Offline fixture pipeline (operator verification on Phase 13 branch):**
+**Offline fixture run sample:** 7 versions / 1 advisory / 1 pattern / 5 KB docs.
 
-| Metric | Value |
-|---|---|
-| total_versions | 7 |
-| total_advisories | 1 |
-| total_aliases | 2 |
-| total_patches | 1 |
-| total_security_patterns | 1 |
-| total_kb_documents | 5 |
-| provenance_coverage | 1.0 |
-| range_resolution_rate | 1.0 |
-| alias_resolution_rate | 1.0 |
-| patch_resolution_rate | 1.0 |
-| schema_validation_rate | 1.0 |
-| duplicate_rate | 0.0 |
-| average_sast_usefulness_score | 0.875 |
-| offline pytest suite | 238 passed |
+**Live crawl into `./data` (verified):** 108 versions, 19 advisories, 21 patches,
+19 security patterns, 92 KB documents; provenance_coverage 1.0.
 
 Command used:
 
