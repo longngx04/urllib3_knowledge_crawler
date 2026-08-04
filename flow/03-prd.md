@@ -20,6 +20,11 @@ resolve advisory aliases or version ranges, or claim any real urllib3 vulnerabil
 Phase 2 adds reusable retrieval infrastructure. It is exercised only with offline mock
 transports in default tests and does not yet implement a PyPI, GitHub, OSV, or NVD crawler.
 
+Phase 3 adds the first source-specific vertical slice: authoritative PyPI project JSON
+is preserved as raw evidence, normalized into PEP 440 version records, validated, and
+exported deterministically. It does not add GitHub correlation, advisories, ranges, or
+new CLI pipeline commands.
+
 ## Target users
 
 - VinSOC AppSec/SAST analysts who need evidence-backed applicability verdicts.
@@ -48,6 +53,9 @@ it; if a pain has no feature, it goes to the "not addressed" list — honestly.
 | P12 | Source-adapter maintainer | Each future connector could implement different timeout, retry, and error behavior. | Phase 2 checklist and crawl engineering requirements in `.agents/implementation_plan.md` and `.agents/context.md`. | Duplicate ad-hoc HTTP calls. | FR13, FR14 | One configured client classifies failures and retries only approved transient conditions. |
 | P13 | Pipeline operator | A repeated crawl currently cannot reuse preserved bytes or run offline. | Cache/idempotency requirements in `.agents/context.md`. | Contact the provider again. | FR15 | The second identical request is served from verified local raw storage without transport access. |
 | P14 | Repository owner | Tokens, authorization headers, cookies, or unbounded bodies could leak into files/logs or exhaust disk/memory. | Security rules in `.agents/rules.md`. | Manual review after every request. | FR16 | Sensitive headers/query credentials are rejected or scoped, persisted headers are allowlisted, and oversized bodies fail before storage. |
+| P15 | Detection-content engineer | There is no authoritative machine-readable inventory of urllib3 releases and distributions. | Phase 3 checklist in `.agents/implementation_plan.md`. | Inspect PyPI manually or compare version strings incorrectly. | FR17, FR18 | One preserved PyPI response produces provenance-backed PEP 440 records for every parsable release and distribution. |
+| P16 | Pipeline maintainer | Malformed, duplicate-normalized, or wrong-project PyPI metadata could silently corrupt later range resolution. | Version validation and untrusted-input rules in `.agents/context.md` and `.agents/rules.md`. | Trust provider JSON without semantic checks. | FR19 | Invalid project identity, artifacts, digests, dates, or normalized collisions fail with actionable typed errors before export. |
+| P17 | Crawler operator | Unparsable versions and inventory coverage are invisible, and output ordering can vary by source order. | Phase 3 statistics/determinism requirements in `.agents/implementation_plan.md`. | Count and sort releases manually. | FR20 | Deterministic JSONL plus explicit totals and unparsable-version reporting are available from the inventory result. |
 
 ### Pains NOT addressed in v1 (deliberate — tie to the scope cut list)
 
@@ -80,6 +88,10 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR14: As an operator, I encounter a timeout, connection reset, HTTP 429/500/502/503/504, or GitHub rate-limit response, and the client performs only bounded exponential retries while respecting valid bounded `Retry-After` or reset delays.
 - FR15: As a pipeline maintainer, I repeat an identical method/normalized-URL/body request, and the client returns the SHA-256-verified cached bytes plus raw request/response metadata without a network call while logging cache hit/miss state.
 - FR16: As a security engineer, I provide `GITHUB_TOKEN` through the environment, and it is sent only as an authorization header to `api.github.com`; credentials, cookies, authorization headers, and response bodies never appear in cache metadata or logs, and unsafe URLs/headers/oversized responses are rejected.
+- FR17: As a crawler operator, I request a configured project through the PyPI adapter, and the adapter fetches exactly `https://pypi.org/pypi/<canonical-project>/json` through the shared retrieval client so the authoritative response is retained in the raw store.
+- FR18: As a detection-content engineer, I normalize a retrieved PyPI response, and I receive one provenance-backed `VersionRecord` per unique parsable PEP 440 release with every distribution artifact, release date, Python requirement, prerelease state, and yanked evidence preserved without invented values.
+- FR19: As a pipeline maintainer, I process untrusted PyPI metadata, and wrong-project responses, unsafe artifact paths/URLs, malformed digests/dates/types, and duplicate normalized versions fail explicitly before deterministic JSONL is written atomically.
+- FR20: As a crawler operator, I inspect a version inventory and its exported JSONL, and records are PEP 440 sorted while totals for versions, prereleases, yanked releases, artifacts, and detected unparsable release keys are deterministic.
 
 ## Non-functional requirements
 
@@ -106,5 +118,6 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 
 2 Phase 0 acceptance commands continue to return exit code 0; 6 Phase 1 model families
 retain schema agreement; 1 repeated Phase 2 request produces exactly 1 transport call;
-all approved transient paths have bounded retry tests; 100% of tests pass; and 0 secret
-values occur in persisted metadata or captured logs.
+1 authoritative PyPI response produces a duplicate-free PEP 440-sorted inventory; 100%
+of fixture releases are either exported or explicitly reported unparsable; 100% of
+tests pass; and 0 secret values occur in persisted metadata or captured logs.

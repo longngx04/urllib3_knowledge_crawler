@@ -46,9 +46,9 @@ When a C feature is the real need, three honest paths:
 
 ## Time budget
 
-One focused implementation session per approved phase. Phases 0–1 are complete; this
-amendment authorizes one focused implementation session for Phase 2 retrieval
-infrastructure.
+One focused implementation session per approved phase. Phases 0–2 are complete; this
+amendment authorizes one focused implementation session for the Phase 3 PyPI version
+inventory.
 
 ## Features in v1 (each with impact AND grade)
 
@@ -67,6 +67,9 @@ infrastructure.
 - Bounded retry policy for documented transient statuses, timeouts, `Retry-After`, and GitHub rate-limit reset headers — impact H (reliable crawls must recover without hammering providers) — grade B (clock/sleep policy and failure classification).
 - Deterministic filesystem cache/raw store with atomic body/metadata writes and SHA-256 verification — impact H (offline reprocessing and provenance depend on preserved, untampered source bytes) — grade B (durable storage plus corruption detection).
 - Cache hit/miss/retry logging that excludes credentials and response bodies — impact M (operators need retrieval diagnostics without secret leakage) — grade A (structured standard-library logging).
+- PyPI project adapter that retrieves authoritative project JSON through the shared raw-cache boundary — impact H (the first real source is required for the version-aware product promise) — grade A (one bounded provider adapter).
+- PEP 440 release normalizer that preserves artifacts, provenance, prerelease/yanked state, release dates, and Python requirements — impact H (all later range and advisory work depends on an accurate version inventory) — grade B (untrusted nested metadata and release-level aggregation rules).
+- Deterministic version validation/export with explicit unparsable-version reporting and inventory statistics — impact H (downstream consumers need auditable, duplicate-free JSONL) — grade B (atomic output plus semantic validation and reproducibility checks).
 
 ## Suggested features (impact-first — proposed, not decided)
 
@@ -84,11 +87,11 @@ decision.
 
 - Domain models and JSON Schemas were deferred from Phase 0 and are now included in the approved Phase 1 amendment.
 - HTTP, cache, retry, and raw storage were deferred from earlier phases and are now included in the approved Phase 2 amendment.
-- Live PyPI, GitHub, OSV, GHSA, and NVD crawling — deferred to Phases 3–5.
+- GitHub, OSV, GHSA, and NVD crawling — deferred to Phases 4–5; the PyPI source is now included in the approved Phase 3 amendment.
 - Range and alias resolution, patch/test enrichment, security patterns, KB documents, statistics, and real query behavior — deferred to Phases 6–13.
 - CI, containerization, deployment, dashboard, vector database, multi-package support, and LLM enrichment — deferred until a validated vertical slice justifies them.
 
 ## Decision
 
-GO — Phases 0–1 established the package and data contracts. Phase 2 adds one reusable,
-security-bounded retrieval seam before any source-specific crawler is implemented.
+GO — Phases 0–2 established the package, data contracts, and secure retrieval seam.
+Phase 3 uses that seam for one authoritative PyPI-to-validated-JSONL vertical slice.

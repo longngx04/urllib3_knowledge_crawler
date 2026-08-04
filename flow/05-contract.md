@@ -60,6 +60,10 @@ Function/—/Access(=none)/Args/Return. The shared column below is "Access/Effec
 | Request identity | `crawler.utils.cache.build_request_identity` | Pure; no I/O | HTTPS method/URL and optional body bytes | `RequestIdentity(method, url, body_sha256, cache_key)`; method uppercase, query pairs deterministically sorted, fragment removed; userinfo/credential-like query keys/unsupported schemes raise `UnsafeRequestError`. |
 | Raw response store | `crawler.utils.cache.RawResponseStore` | Atomic writes below its resolved root only; reads and verifies cached bytes | `root: Path`; `load(cache_key, max_body_bytes=None)`; `store(identity, status_code, headers, retrieved_at, body)` | `StoredResponse | None`; metadata contains request identity, status/content type/time/body size/SHA and allowlisted cache/rate headers only; corruption/path/size violations raise typed errors before unbounded body reads. |
 | Retrieval client | `crawler.utils.http.RetrievalClient.fetch` | Cache read/write and optional HTTPS request; no redirects; auth only for GitHub API | `method`, `url`, optional `content`, non-sensitive `headers`; typed config/store; optional `GITHUB_TOKEN` | `RetrievedResponse(status_code, url, headers, content, retrieved_at, body_sha256, cache_key, from_cache, attempts)`; approved transient failures retry boundedly; permanent/oversized/exhausted failures raise typed actionable errors. |
+| PyPI project client | `crawler.clients.pypi.PyPIClient.fetch_project` | Reads/writes the shared raw cache and may make one bounded HTTPS request to `pypi.org`; no code execution | `project_name: str` matching a bounded Python distribution name; injected `RetrievalClient` | Successful HTTP 200 JSON `RetrievedResponse` for `https://pypi.org/pypi/<canonical-name>/json`; invalid names, non-200 responses, or non-JSON content raise typed `PyPIClientError`. |
+| PyPI version normalizer | `crawler.normalizers.versions.normalize_pypi_versions` | Pure after receiving exact retrieved bytes; no network or filesystem effects | `response: RetrievedResponse`; expected `PackageRecord` | Frozen `VersionInventory(records, unparsable_versions, stats)`; one provenance-backed record per unique parsable release, PEP 440 sorted; malformed/wrong-project/unsafe artifact metadata and normalized collisions raise typed errors. |
+| Version inventory validator | `crawler.validators.versions.validate_version_inventory` | Pure; no I/O | Iterable of `VersionRecord` plus expected `PackageRecord` | Tuple of validated records in PEP 440 order; duplicate normalized versions/record IDs, package mismatches, inconsistent prerelease flags, unsafe artifact metadata, malformed dates/digests, or ordering violations raise `VersionInventoryValidationError`. |
+| Version JSONL exporter | `crawler.exporters.jsonl.export_version_inventory` | Atomically writes only fixed `versions.jsonl` below a caller-selected non-symlink output directory | Valid `VersionInventory`; `output_directory: Path` | `VersionExportResult(path, sha256, record_count)`; UTF-8 one-record-per-line JSON with canonical keys and PEP 440 order; repeated equivalent input produces identical bytes. |
 
 ## Shared shapes (objects used by multiple interfaces)
 
@@ -153,6 +157,25 @@ RawResponseMetadata:
     body_sha256: 64 lowercase hex
     body_size: non-negative int
     headers: allowlisted cache/rate-limit header mapping
+
+DistributionArtifact:
+  filename: non-empty basename without traversal separators
+  url: HTTPS files.pythonhosted.org URL | null
+  size: non-negative int | null
+  sha256: 64 lowercase hex | null
+  package_type: str | null
+  python_version: str | null
+  requires_python: str | null
+  upload_time: timezone-aware datetime | null
+  is_yanked: bool
+  yanked_reason: str | null (only when is_yanked=true)
+
+VersionInventoryStats:
+  total_versions: non-negative int
+  total_prereleases: non-negative int
+  total_yanked_versions: non-negative int
+  total_artifacts: non-negative int
+  total_unparsable_versions: non-negative int
 ```
 
 ## Feature → interface map
@@ -176,3 +199,7 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR14 → retrieval client and `HttpClientConfig` retry fields.
 - FR15 → request identity, raw response store, and retrieval client cache path.
 - FR16 → retrieval configuration, request identity, raw response store, and retrieval client security rules.
+- FR17 → PyPI project client and raw response store.
+- FR18 → PyPI version normalizer and `DistributionArtifact` shared shape.
+- FR19 → PyPI version normalizer, version inventory validator, and version JSONL exporter.
+- FR20 → PyPI version normalizer, `VersionInventoryStats`, and version JSONL exporter.
