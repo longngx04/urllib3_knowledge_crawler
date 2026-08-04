@@ -134,6 +134,8 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR51: As a crawler operator, I run the offline fixture pipeline twice in one output directory, and normalized JSONL exports are byte-identical because cached raw responses preserve provenance timestamps.
 - FR52: As a reviewer, I rerun the offline fixture pipeline in fresh output directories, and normalized inventories match once volatile `retrieved_at` provenance fields are excluded from content hashes.
 - FR53: As a maintainer, I follow reproducibility documentation and locked dependencies, and default offline tests pass without network access while optional slow install smoke verifies package metadata.
+- FR54: As a reviewer, I read `reports/urllib3_crawl_report.md`, and I see why urllib3 was chosen, how crawling works, what was produced, and three SAST case studies with evidence.
+- FR55: As an operator, I follow the root README, and I can install, run the offline pipeline, query results, and locate outputs without undocumented steps.
 
 ## Non-functional requirements
 

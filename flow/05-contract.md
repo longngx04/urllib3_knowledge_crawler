@@ -250,3 +250,10 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR46 → `ValidationOptions.strict` and `PipelineValidationError` aggregate failures for non-zero exit mapping.
 - FR47 → `compute_pipeline_stats`, `export_stats`, `export_manifest`, and `sha256_file`.
 - FR48 → `export_validation_errors` writing `validation_errors.json`.
+- FR49 → pipeline CLI `run` / stage commands and `crawler.pipeline` orchestration.
+- FR50 → Typer `--help` surfaces and CLI exit-code contract.
+- FR51 → offline fixture pipeline byte-identical re-run via raw cache.
+- FR52 → deterministic content-hash comparison excluding volatile `retrieved_at`.
+- FR53 → `docs/reproducibility.md`, `requirements.lock`, and clean-install smoke tests.
+- FR54 → `reports/urllib3_crawl_report.md` engineering report.
+- FR55 → root `README.md` operator runbook.

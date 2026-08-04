@@ -799,6 +799,15 @@ Exclude timestamps from deterministic content hashes.
 
 Explain the engineering decisions and demonstrate security value.
 
+### Tasks
+
+- [x] Write executive summary through conclusion (18 required sections).
+- [x] Document why `urllib3` was selected.
+- [x] Document how crawling works (architecture + operational method).
+- [x] Document what was crawled with generated statistics.
+- [x] Include three case studies in the required format.
+- [x] Publish a detailed operator README for install/run/query/safety.
+
 ### Required Report Sections
 
 1. Executive summary.

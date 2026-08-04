@@ -1,98 +1,97 @@
 # urllib3 Knowledge Crawler
 
-`urllib3-knowledge-crawler` is an internal Python CLI for building version-aware,
-evidence-backed security knowledge about `urllib3` for AI-assisted SAST. The eventual
-pipeline will connect package versions and authoritative advisories to relevant APIs,
-configuration, data-flow conditions, negative conditions, patches, and regression
-tests.
+`urllib3-knowledge-crawler` is a Python CLI that builds **version-aware, evidence-backed
+security knowledge** about [`urllib3`](https://github.com/urllib3/urllib3) for
+**AI-assisted SAST**.
 
-## Current scope (Phases 0–12)
+It does more than SCA version matching. The pipeline preserves authoritative raw
+sources, resolves exact affected releases, attaches API / configuration / data-flow
+conditions, links patch and regression-test evidence, and exports retrieval-ready
+documents with full provenance.
 
-Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
-configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
-adds strict domain records, deterministic record identifiers, and checked-in JSON
-Schemas. The data-contract decisions are documented in
-[`docs/data_contracts.md`](docs/data_contracts.md).
+Engineering report: [`reports/urllib3_crawl_report.md`](reports/urllib3_crawl_report.md).
 
-Phase 2 adds a security-bounded HTTPS retrieval client, transient/rate-limit retry,
-scoped GitHub authentication, and a SHA-256-verified raw response cache. Its safety and
-replay contract is documented in [`docs/retrieval.md`](docs/retrieval.md).
+## Why this exists
 
-Phase 3 adds the first source-specific vertical slice: public PyPI project metadata is
-preserved, normalized into PEP 440-sorted version records, semantically validated, and
-atomically exported as deterministic JSONL. Its usage and aggregation rules are
-documented in [`docs/pypi_versions.md`](docs/pypi_versions.md).
+SCA feeds answer “is package version V listed as affected?”
+SAST still needs:
 
-Phase 4 correlates GitHub releases/tags and changelog entries with the version
-inventory. Phase 5 collects OSV advisories and merges explicitly linked alias clusters.
-Phase 6 resolves advisory ranges against the PyPI inventory into deterministic affected-
-version lists; see [`docs/range_resolution.md`](docs/range_resolution.md). Phase 7
-enriches advisories with official commit diff evidence and regression-test paths; see
-[`docs/patch_enrichment.md`](docs/patch_enrichment.md). Phase 8 extracts SAST-oriented
-security patterns from advisories and patch evidence; see
-[`docs/security_patterns.md`](docs/security_patterns.md). Phase 9 generates
-retrieval-oriented KB documents from security patterns; see
-[`docs/kb_documents.md`](docs/kb_documents.md). Phase 10 validates normalized
-inventories and exports reproducible `stats.json`, `manifest.json`, and
-`validation_errors.json`; see [`docs/validation_stats.md`](docs/validation_stats.md).
-Phase 11 wires the full pipeline and query demo through the CLI; see
-[`docs/cli.md`](docs/cli.md) and [`docs/running.md`](docs/running.md). Phase 12 adds
-deterministic fixture tests, dependency locking, and reproducibility documentation; see
-[`docs/reproducibility.md`](docs/reproducibility.md).
+- which symbols and call paths matter
+- which configuration enables the bug
+- which data-flow preconditions are required
+- which negative conditions make the finding a false positive
+- which patch and tests prove the fix
 
-Default tests remain offline. Live network access is required only for operator crawls
-without `--offline` / fixture mode.
+This crawler turns public urllib3 evidence into that structured knowledge.
 
-## Reproducibility
+## Current scope (Phases 0–13)
 
-Phase 12 locks development dependencies in [`requirements.lock`](requirements.lock)
-and documents exact offline verification commands in
-[`docs/reproducibility.md`](docs/reproducibility.md). Run the deterministic fixture
-test module directly:
+| Phase | Capability | Docs |
+|---|---|---|
+| 0 | Installable CLI bootstrap | this README |
+| 1 | Typed records + JSON Schemas | [`docs/data_contracts.md`](docs/data_contracts.md) |
+| 2 | Secure HTTP / cache / retry | [`docs/retrieval.md`](docs/retrieval.md) |
+| 3 | PyPI version inventory | [`docs/pypi_versions.md`](docs/pypi_versions.md) |
+| 4 | GitHub releases / tags / changelog | (release normalizers) |
+| 5 | OSV advisories + alias merge | [`docs/advisory_collection.md`](docs/advisory_collection.md) |
+| 6 | Affected-range resolution | [`docs/range_resolution.md`](docs/range_resolution.md) |
+| 7 | Patch + regression enrichment | [`docs/patch_enrichment.md`](docs/patch_enrichment.md) |
+| 8 | SAST security patterns | [`docs/security_patterns.md`](docs/security_patterns.md) |
+| 9 | KB documents | [`docs/kb_documents.md`](docs/kb_documents.md) |
+| 10 | Validation + stats/manifest | [`docs/validation_stats.md`](docs/validation_stats.md) |
+| 11 | Full CLI pipeline + query | [`docs/cli.md`](docs/cli.md), [`docs/running.md`](docs/running.md) |
+| 12 | Reproducibility / locks | [`docs/reproducibility.md`](docs/reproducibility.md) |
+| 13 | Report + operator README | [`reports/urllib3_crawl_report.md`](reports/urllib3_crawl_report.md) |
 
-```bash
-pytest tests/test_deterministic_pipeline.py
-```
+Optional NVD enrichment remains out of the default path.
 
-Fresh output directories produce semantically identical normalized JSONL once volatile
-`retrieved_at` provenance timestamps are excluded; reusing the same `--output` path
-yields byte-identical exports via the verified raw cache.
+## Requirements
 
-Python 3.11 or newer is required. Phase 0 is verified with Python 3.12.
+- CPython **3.11+** (verified on **3.12**)
+- Network only for live crawls (PyPI, GitHub, OSV)
+- Optional `GITHUB_TOKEN` for higher GitHub API rate limits
 
-## Setup
-
-From a fresh checkout, create an isolated environment and install the project with
-its development tools:
+## Install
 
 ```bash
+git clone https://github.com/longngx04/urllib3_knowledge_crawler.git
+cd urllib3_knowledge_crawler
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
+# optional pinned set:
+# python -m pip install -r requirements.lock
 ```
 
-The editable install provides both the module entry point and the `urllib3-kb`
-console script.
-
-## Commands
+Verify:
 
 ```bash
 python -m crawler --help
 python -m crawler --version
-urllib3-kb --help
-urllib3-kb --version
+# expected: urllib3-knowledge-crawler 0.1.0
 ```
 
-The exact version output is:
+## Configuration
 
-```text
-urllib3-knowledge-crawler 0.1.0
+Package identity and crawl toggles: [`configs/urllib3.yaml`](configs/urllib3.yaml).
+
+```bash
+cp .env.example .env
+export GITHUB_TOKEN=ghp_...   # optional; never commit
 ```
 
-### Pipeline (Phase 11)
+Rules:
 
-Run the full offline fixture pipeline (no network):
+- secrets only in environment / ignored `.env`
+- never log, cache, or persist authorization headers
+- `NVD_API_KEY` is reserved for optional later enrichment
+
+## How to run (detailed)
+
+### A. Offline fixture pipeline (recommended first run)
+
+No live network. Uses `tests/fixtures/pipeline` via MockTransport:
 
 ```bash
 python -m crawler run \
@@ -102,100 +101,155 @@ python -m crawler run \
   --fixture-dir tests/fixtures/pipeline
 ```
 
-Individual stages:
+Expected summary line (fixture scale):
 
-```bash
-python -m crawler crawl --config configs/urllib3.yaml
-python -m crawler normalize --config configs/urllib3.yaml
-python -m crawler enrich --config configs/urllib3.yaml
-python -m crawler validate --config configs/urllib3.yaml
-python -m crawler build-kb --config configs/urllib3.yaml
-python -m crawler stats --config configs/urllib3.yaml
+```text
+run complete: 7 versions, 1 advisories, 1 patterns -> /tmp/urllib3-kb
 ```
 
-Query demo (after normalize + enrich or `run`):
+Outputs:
+
+```text
+/tmp/urllib3-kb/
+  raw/                         # SHA-256 preserved responses
+  normalized/
+    versions.jsonl
+    advisories.jsonl
+    patches.jsonl
+    security_patterns.jsonl
+  kb/
+    documents.jsonl
+  stats.json
+  manifest.json
+```
+
+### B. Stage-by-stage
+
+```bash
+OUT=/tmp/urllib3-kb
+CFG=configs/urllib3.yaml
+FIX=tests/fixtures/pipeline
+
+python -m crawler crawl     --config $CFG --output $OUT --offline --fixture-dir $FIX
+python -m crawler normalize --config $CFG --output $OUT --offline --fixture-dir $FIX
+python -m crawler enrich    --config $CFG --output $OUT --offline --fixture-dir $FIX
+python -m crawler validate  --config $CFG --output $OUT
+python -m crawler build-kb  --config $CFG --output $OUT
+python -m crawler stats     --config $CFG --output $OUT
+```
+
+Exit codes: `0` success, `1` validation failure (strict), `2` usage error.
+
+### C. Query demo
+
+After `run` / enrich:
 
 ```bash
 python -m crawler query \
   --package urllib3 \
-  --version 2.6.0 \
+  --version 2.0.6 \
   --output /tmp/urllib3-kb
 ```
 
-Use `--output` to override `output.directory` from the YAML config. See
-[`docs/cli.md`](docs/cli.md) for exit codes, offline mode, and options.
+Optional symbol filter:
 
-## Quality checks
+```bash
+python -m crawler query \
+  --package urllib3 \
+  --version 2.0.6 \
+  --symbol _validate_redirect_url \
+  --output /tmp/urllib3-kb
+```
 
-All bootstrap tests are offline. Run the complete local gate from the repository
-root:
+Printed fields include package, version, affected flag, canonical advisory, detection
+type, symbols, preconditions, negative conditions, fixed version, remediation,
+evidence, and confidence.
+
+### D. Live crawl (operator)
+
+Requires network. Prefer setting `GITHUB_TOKEN`.
+
+```bash
+export GITHUB_TOKEN=...   # optional but recommended
+python -m crawler run \
+  --config configs/urllib3.yaml \
+  --output data
+```
+
+Re-run with cache hits:
+
+```bash
+python -m crawler run --config configs/urllib3.yaml --output data --skip-crawl
+```
+
+Do **not** commit generated `data/` trees.
+
+## Quality gate
 
 ```bash
 pytest
+pytest tests/test_deterministic_pipeline.py
 ruff check .
 ruff format --check .
 mypy crawler
 ```
 
-## PyPI version inventory
+At Phase 13 merge tip, the offline suite reports **238 passed**.
 
-Phase 3 exposes composable library APIs rather than a new pipeline command. A caller
-constructs the shared `RetrievalClient`, fetches project JSON with
-`PyPIClient.fetch_project`, normalizes it with `normalize_pypi_versions`, and writes the
-validated inventory with `export_version_inventory`.
+## What gets crawled (and how)
 
-The committed configuration produces the planned paths `data/raw/pypi/` and
-`data/normalized/versions.jsonl`. Generated source and normalized data stay ignored by
-Git. See `docs/pypi_versions.md` for a complete example and the exact validation rules.
-
-## Configuration and credentials
-
-[`configs/urllib3.yaml`](configs/urllib3.yaml) is the package-specific configuration
-contract. It records the target package, authoritative sources, repository metadata,
-deterministic output settings, and conservative crawl defaults. The shared retrieval
-loader consumes its bounded `crawl` section; callers pass the package identity to the
-Phase 3 normalizer explicitly.
-
-Optional upstream credential names are documented in `.env.example`. Copy it to an
-ignored local `.env` only when a later phase requires authenticated source access:
-
-```bash
-cp .env.example .env
+```text
+configs/urllib3.yaml
+        │
+        ▼
+RetrievalClient + RawResponseStore
+  (HTTPS, timeouts, retries, rate limits, SHA-256 cache)
+        │
+        ├── PyPI JSON          → versions.jsonl
+        ├── GitHub releases/tags/changelog/commits
+        └── OSV query/vulns    → advisories → aliases → ranges
+                                      │
+                                      ▼
+                               patches → security patterns → KB docs
+                                      │
+                                      ▼
+                               validate → stats.json / manifest.json
 ```
 
-Never commit token values. Credentials must come from environment variables and must
-not be printed, logged, cached, or persisted by the crawler.
+Source trust (highest first): maintainer advisories / official repo → PyPI → OSV/GHSA →
+optional NVD. Conflicts are preserved; fixed versions and ranges are never invented.
 
 ## Repository layout
 
 ```text
 crawler/
-  clients/       # Remote-source adapters, currently PyPI
-  extractors/    # Raw evidence extraction (later phase)
-  normalizers/   # Deterministic source normalization
-  resolvers/     # Alias/version/patch resolution (later phase)
-  resolvers/     # Alias clustering and version-range resolution
-  validators/    # Schema, inventory, and pipeline validation
-  exporters/     # JSON Schema, JSONL, stats, and manifest output
-  utils/         # Shared hashing, retrieval, cache, and retry helpers
-schemas/         # Checked-in Phase 1 JSON Schema contracts
-tests/fixtures/  # Offline test inputs
-data/raw/        # Preserved source responses
-data/normalized/ # Deterministic normalized JSONL
-data/kb/         # Retrieval-oriented documents
+  clients/      # PyPI, GitHub, OSV adapters
+  extractors/   # changelog, patch_diff, semantics
+  normalizers/  # versions, advisories, releases, patches, patterns, kb
+  resolvers/    # aliases, ranges
+  validators/   # inventory + pipeline validation
+  exporters/    # JSONL, schemas, stats, manifest
+  pipeline.py   # stage orchestration
+  cli.py        # Typer commands
+configs/urllib3.yaml
+schemas/        # Draft 2020-12 contracts
+tests/fixtures/ # offline payloads (incl. pipeline/)
+docs/           # phase contracts and operator guides
+reports/        # crawl / design report
+data/           # local crawl output (gitignored)
 ```
 
-Generated content under `data/` is ignored; explicit `.gitkeep` markers preserve the
-intended boundaries.
+## Reproducibility
 
-## Source trust and security
+See [`docs/reproducibility.md`](docs/reproducibility.md) and
+[`requirements.lock`](requirements.lock). Offline double-runs must produce matching
+normalized JSONL once volatile `retrieved_at` values are excluded; reusing the same
+output directory yields byte-identical exports via the raw cache.
 
-Maintainer advisories and the official `urllib3` repository have highest priority,
-followed by PyPI and structured OSV/GHSA/NVD records. Later implementations must
-preserve raw evidence and provenance, report source conflicts, and never invent
-affected ranges, fixed versions, aliases, severity, dates, or patch identity.
+## Security notes
 
-All remote content is untrusted data. It must be bounded and validated, must never be
-executed, and must never control an unchecked filesystem path. The project does not
-generate exploits, persist authorization headers, or treat LLM inference as an
-authoritative security fact.
+- Treat all remote content as untrusted data
+- Never execute downloaded code
+- Never commit `.env`, tokens, or `data/` artifacts
+- Authorization is injected only for `api.github.com`
+- Default tests must not require the network
