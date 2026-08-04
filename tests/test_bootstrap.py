@@ -74,6 +74,7 @@ def test_planned_repository_boundaries_exist() -> None:
         "crawler/utils",
         "schemas",
         "tests/fixtures",
+        "tests/fixtures/pipeline",
         "data/raw",
         "data/normalized",
         "data/kb",
@@ -81,3 +82,17 @@ def test_planned_repository_boundaries_exist() -> None:
 
     for relative_path in expected_directories:
         assert (PROJECT_ROOT / relative_path).is_dir()
+
+
+def test_pipeline_fixture_bundle_exists() -> None:
+    fixture_root = PROJECT_ROOT / "tests" / "fixtures" / "pipeline"
+    required = (
+        "pypi_project.json",
+        "osv_query.json",
+        "github_tags.json",
+        "github_releases.json",
+        "changelog.rst",
+        "commits/c3d4e5f6789012345678901234567890abcdef12.json",
+    )
+    for relative in required:
+        assert (fixture_root / relative).is_file()

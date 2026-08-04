@@ -1,0 +1,52 @@
+[
+  {
+    "name": "2.7.0",
+    "zipball_url": "https://api.github.com/repos/urllib3/urllib3/zipball/refs/tags/2.7.0",
+    "tarball_url": "https://api.github.com/repos/urllib3/urllib3/tarball/refs/tags/2.7.0",
+    "commit": {
+      "sha": "aabbccddee00112233445566778899aabbccddee",
+      "url": "https://api.github.com/repos/urllib3/urllib3/commits/aabbccddee00112233445566778899aabbccddee"
+    },
+    "node_id": "MDM6UmVmMjYyNTk="
+  },
+  {
+    "name": "2.6.0",
+    "zipball_url": "https://api.github.com/repos/urllib3/urllib3/zipball/refs/tags/2.6.0",
+    "tarball_url": "https://api.github.com/repos/urllib3/urllib3/tarball/refs/tags/2.6.0",
+    "commit": {
+      "sha": "1122334455667788990011223344556677889900",
+      "url": "https://api.github.com/repos/urllib3/urllib3/commits/1122334455667788990011223344556677889900"
+    },
+    "node_id": "MDM6UmVmMjYyNjA="
+  },
+  {
+    "name": "2.5.0",
+    "zipball_url": "https://api.github.com/repos/urllib3/urllib3/zipball/refs/tags/2.5.0",
+    "tarball_url": "https://api.github.com/repos/urllib3/urllib3/tarball/refs/tags/2.5.0",
+    "commit": {
+      "sha": "aabb00112233445566778899001122334455aabb",
+      "url": "https://api.github.com/repos/urllib3/urllib3/commits/aabb00112233445566778899001122334455aabb"
+    },
+    "node_id": "MDM6UmVmMjYyNjE="
+  },
+  {
+    "name": "2.7.1a1",
+    "zipball_url": "https://api.github.com/repos/urllib3/urllib3/zipball/refs/tags/2.7.1a1",
+    "tarball_url": "https://api.github.com/repos/urllib3/urllib3/tarball/refs/tags/2.7.1a1",
+    "commit": {
+      "sha": "ff00112233445566778899aabbccddeeff001122",
+      "url": "https://api.github.com/repos/urllib3/urllib3/commits/ff00112233445566778899aabbccddeeff001122"
+    },
+    "node_id": "MDM6UmVmMjYyNjI="
+  },
+  {
+    "name": "not-a-version",
+    "zipball_url": "https://api.github.com/repos/urllib3/urllib3/zipball/refs/tags/not-a-version",
+    "tarball_url": "https://api.github.com/repos/urllib3/urllib3/tarball/refs/tags/not-a-version",
+    "commit": {
+      "sha": "0000000000000000000000000000000000000000",
+      "url": "https://api.github.com/repos/urllib3/urllib3/commits/0000000000000000000000000000000000000000"
+    },
+    "node_id": "MDM6UmVmMjYyNjM="
+  }
+]

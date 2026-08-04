@@ -8,8 +8,11 @@ import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
+from typing import Protocol, TypeVar
 
+from pydantic import BaseModel
+
+from crawler.normalizers.advisories import AdvisoryInventory
 from crawler.normalizers.kb_documents import KBDocumentInventory
 from crawler.normalizers.patches import PatchInventory
 from crawler.normalizers.patterns import SecurityPatternInventory
@@ -33,6 +36,10 @@ class SecurityPatternExportError(JsonlExportError):
     """Raised when a security-pattern inventory cannot be exported safely."""
 
 
+class AdvisoryExportError(JsonlExportError):
+    """Raised when an advisory inventory cannot be exported safely."""
+
+
 class KBDocumentExportError(JsonlExportError):
     """Raised when a KB document inventory cannot be exported safely."""
 
@@ -51,6 +58,9 @@ VersionExportResult = JsonlExportResult
 
 class _JsonlRecord(Protocol):
     def model_dump(self, *, mode: str) -> dict[str, object]: ...
+
+
+JsonlModel = TypeVar("JsonlModel", bound=BaseModel)
 
 
 def _jsonl_bytes_from_records(records: tuple[_JsonlRecord, ...]) -> bytes:
@@ -134,6 +144,26 @@ def export_version_inventory(
     )
 
 
+def export_advisory_inventory(
+    inventory: AdvisoryInventory, output_directory: Path
+) -> JsonlExportResult:
+    """Atomically write advisory records to fixed ``advisories.jsonl``."""
+    payload = _jsonl_bytes_from_records(inventory.records)
+    output_path = _atomic_write_jsonl(
+        payload,
+        output_directory,
+        "advisories.jsonl",
+        ".advisories.",
+        "advisory",
+        AdvisoryExportError,
+    )
+    return JsonlExportResult(
+        path=output_path,
+        sha256=hashlib.sha256(payload).hexdigest(),
+        record_count=len(inventory.records),
+    )
+
+
 def export_patch_inventory(
     inventory: PatchInventory, output_directory: Path
 ) -> JsonlExportResult:
@@ -195,7 +225,29 @@ def export_kb_document_inventory(
     )
 
 
+def load_jsonl_records(path: Path, model: type[JsonlModel]) -> tuple[JsonlModel, ...]:
+    """Load one JSONL file into validated Pydantic records."""
+    if not path.is_file():
+        raise JsonlExportError(f"JSONL file not found: {path}")
+    records: list[JsonlModel] = []
+    for line_number, line in enumerate(
+        path.read_text(encoding="utf-8").splitlines(), 1
+    ):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        try:
+            payload = json.loads(stripped)
+        except json.JSONDecodeError as error:
+            raise JsonlExportError(
+                f"invalid JSON on line {line_number} of {path.name}"
+            ) from error
+        records.append(model.model_validate(payload))
+    return tuple(records)
+
+
 __all__ = [
+    "AdvisoryExportError",
     "JsonlExportError",
     "JsonlExportResult",
     "KBDocumentExportError",
@@ -203,8 +255,10 @@ __all__ = [
     "SecurityPatternExportError",
     "VersionExportError",
     "VersionExportResult",
+    "export_advisory_inventory",
     "export_kb_document_inventory",
     "export_patch_inventory",
     "export_security_pattern_inventory",
     "export_version_inventory",
+    "load_jsonl_records",
 ]

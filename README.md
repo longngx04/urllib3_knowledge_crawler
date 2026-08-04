@@ -6,7 +6,7 @@ pipeline will connect package versions and authoritative advisories to relevant 
 configuration, data-flow conditions, negative conditions, patches, and regression
 tests.
 
-## Current scope (Phases 0–10)
+## Current scope (Phases 0–11)
 
 Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
 configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
@@ -35,11 +35,11 @@ retrieval-oriented KB documents from security patterns; see
 [`docs/kb_documents.md`](docs/kb_documents.md). Phase 10 validates normalized
 inventories and exports reproducible `stats.json`, `manifest.json`, and
 `validation_errors.json`; see [`docs/validation_stats.md`](docs/validation_stats.md).
+Phase 11 wires the full pipeline and query demo through the CLI; see
+[`docs/cli.md`](docs/cli.md) and [`docs/running.md`](docs/running.md).
 
-The project still intentionally does **not** implement pipeline CLI crawl, validate,
-or stats commands, or query behavior. Current CLI commands do not contact the network
-or read credentials; default tests exercise retrieval and source adapters offline with
-fixtures.
+Default tests remain offline. Live network access is required only for operator crawls
+without `--offline` / fixture mode.
 
 Python 3.11 or newer is required. Phase 0 is verified with Python 3.12.
 
@@ -73,8 +73,40 @@ The exact version output is:
 urllib3-knowledge-crawler 0.1.0
 ```
 
-Later phases will add crawl, normalization, enrichment, validation, KB-building,
-statistics, and query commands. Their presence is not implied by this bootstrap.
+### Pipeline (Phase 11)
+
+Run the full offline fixture pipeline (no network):
+
+```bash
+python -m crawler run \
+  --config configs/urllib3.yaml \
+  --output /tmp/urllib3-kb \
+  --offline \
+  --fixture-dir tests/fixtures/pipeline
+```
+
+Individual stages:
+
+```bash
+python -m crawler crawl --config configs/urllib3.yaml
+python -m crawler normalize --config configs/urllib3.yaml
+python -m crawler enrich --config configs/urllib3.yaml
+python -m crawler validate --config configs/urllib3.yaml
+python -m crawler build-kb --config configs/urllib3.yaml
+python -m crawler stats --config configs/urllib3.yaml
+```
+
+Query demo (after normalize + enrich or `run`):
+
+```bash
+python -m crawler query \
+  --package urllib3 \
+  --version 2.6.0 \
+  --output /tmp/urllib3-kb
+```
+
+Use `--output` to override `output.directory` from the YAML config. See
+[`docs/cli.md`](docs/cli.md) for exit codes, offline mode, and options.
 
 ## Quality checks
 

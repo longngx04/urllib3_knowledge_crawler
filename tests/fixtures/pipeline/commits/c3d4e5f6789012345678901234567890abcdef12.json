@@ -1,0 +1,21 @@
+{
+  "sha": "c3d4e5f6789012345678901234567890abcdef12",
+  "html_url": "https://github.com/urllib3/urllib3/commit/c3d4e5f6789012345678901234567890abcdef12",
+  "parents": [
+    {
+      "sha": "0000000000000000000000000000000000000003"
+    }
+  ],
+  "files": [
+    {
+      "filename": "src/urllib3/connectionpool.py",
+      "status": "modified",
+      "patch": "@@ -830,6 +830,12 @@ class HTTPConnectionPool(ConnectionPool, RequestMethods):\n     def _validate_redirect_url(self, url):\n+        if url is None:\n+            raise LocationParseError(\"redirect URL must not be None\")\n+        if not isinstance(url, str):\n+            raise LocationParseError(\"redirect URL must be a string\")\n+        if url.startswith(\"//\"):\n+            raise LocationParseError(\"protocol-relative redirects are not allowed\")\n         parsed = parse_url(url)\n         if parsed.scheme not in (\"http\", \"https\"):\n             raise LocationParseError(\"unsupported redirect scheme\")\n"
+    },
+    {
+      "filename": "test/test_poolmanager.py",
+      "status": "modified",
+      "patch": "@@ -210,6 +210,18 @@ def test_redirect_follows_location():\n     assert response.status == 200\n+\n+def test_redirect_rejects_protocol_relative_location():\n+    pool = HTTPConnectionPool(\"127.0.0.1\")\n+    with pytest.raises(LocationParseError):\n+        pool._validate_redirect_url(\"//evil.example/path\")\n+\n+def test_redirect_rejects_non_string_location():\n+    pool = HTTPConnectionPool(\"127.0.0.1\")\n+    with pytest.raises(LocationParseError):\n+        pool._validate_redirect_url(None)\n"
+    }
+  ]
+}

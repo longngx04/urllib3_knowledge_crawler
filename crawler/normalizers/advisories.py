@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
@@ -30,6 +31,18 @@ _COMMIT_URL_PATTERN = re.compile(
 
 class AdvisoryNormalizationError(ValueError):
     """Raised when raw vulnerability data cannot be safely normalized."""
+
+
+@dataclass(frozen=True, slots=True)
+class AdvisoryInventory:
+    """Deterministic collection of normalized advisory records."""
+
+    package: PackageRecord
+    records: tuple[AdvisoryRecord, ...]
+
+    @property
+    def record_count(self) -> int:
+        return len(self.records)
 
 
 def select_canonical_identifier(identifiers: Sequence[str]) -> str:
@@ -335,6 +348,7 @@ def normalize_osv_vulnerability(
 
 
 __all__ = [
+    "AdvisoryInventory",
     "AdvisoryNormalizationError",
     "extract_commit_shas",
     "normalize_osv_vulnerability",

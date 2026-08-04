@@ -1,0 +1,46 @@
+[
+  {
+    "id": 100001,
+    "tag_name": "2.7.0",
+    "name": "2.7.0",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2025-07-16T10:00:00Z",
+    "published_at": "2025-07-16T12:00:00Z",
+    "html_url": "https://github.com/urllib3/urllib3/releases/tag/2.7.0",
+    "body": "## What's Changed\n\n- Fixed connection pooling issue (#3456)\n- Security: Fixed SSRF vulnerability (CVE-2025-43802, GHSA-vqfr-h8mv-ghfj)\n- Added HTTP/2 support\n\n**Full Changelog**: https://github.com/urllib3/urllib3/compare/2.6.0...2.7.0"
+  },
+  {
+    "id": 100002,
+    "tag_name": "2.6.0",
+    "name": "2.6.0",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2025-05-01T10:00:00Z",
+    "published_at": "2025-05-01T12:00:00Z",
+    "html_url": "https://github.com/urllib3/urllib3/releases/tag/2.6.0",
+    "body": "## What's Changed\n\n- Bugfix: Handle timeout correctly\n- Added retry configuration\n\n**Full Changelog**: https://github.com/urllib3/urllib3/compare/2.5.0...2.6.0"
+  },
+  {
+    "id": 100003,
+    "tag_name": "2.5.0",
+    "name": "2.5.0",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2025-03-15T10:00:00Z",
+    "published_at": "2025-03-15T12:00:00Z",
+    "html_url": "https://github.com/urllib3/urllib3/releases/tag/2.5.0",
+    "body": "## What's Changed\n\n- Deprecated old connection API\n- Documentation improvements"
+  },
+  {
+    "id": 100004,
+    "tag_name": "2.7.1a1",
+    "name": "2.7.1a1 (Pre-release)",
+    "draft": false,
+    "prerelease": true,
+    "created_at": "2025-08-01T10:00:00Z",
+    "published_at": "2025-08-01T12:00:00Z",
+    "html_url": "https://github.com/urllib3/urllib3/releases/tag/2.7.1a1",
+    "body": "Alpha pre-release for testing"
+  }
+]

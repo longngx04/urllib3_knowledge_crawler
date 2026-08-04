@@ -739,11 +739,11 @@ Confidence:
 
 ### Acceptance Criteria
 
-- The full pipeline runs with one command.
-- Commands support `--help`.
-- Errors are clear.
-- Output paths are configurable.
-- The query demo returns evidence-backed results.
+- [x] The full pipeline runs with one command.
+- [x] Commands support `--help`.
+- [x] Errors are clear.
+- [x] Output paths are configurable.
+- [x] The query demo returns evidence-backed results.
 
 ---
 
