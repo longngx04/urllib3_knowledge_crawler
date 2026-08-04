@@ -133,32 +133,50 @@ hai nguồn mâu thuẫn, cả hai claim được giữ kèm lý do thay vì ch�
 
 ## 7. Pipeline Architecture
 
-```text
-configs/urllib3.yaml
-  → RetrievalClient + RawStore     (timeout, retry, giới hạn kích thước, cache SHA-256)
-  → adapter PyPI / GitHub / OSV
-  → normalizer + alias resolver + range resolver
-  → patch enrichment + security pattern + KB documents
-  → validate → stats.json / manifest.json
+```mermaid
+flowchart TD
+  A["configs/urllib3.yaml<br/>+ .env credentials"] --> B["RetrievalClient + RawStore<br/>timeout · retry · size limit · SHA-256 cache"]
+  B --> C["Source adapters"]
+  C --> C1["PyPI"]
+  C --> C2["GitHub<br/>releases / tags / changelog / commits"]
+  C --> C3["OSV / GHSA"]
+  C1 --> D["data/raw/<br/>raw body + allowlisted metadata"]
+  C2 --> D
+  C3 --> D
+  D --> E["Normalizers"]
+  E --> F["Alias resolver<br/>GHSA > CVE > OSV/PYSEC"]
+  F --> G["Range resolver<br/>map onto PyPI inventory"]
+  G --> H["Patch enrichment<br/>diff · symbols · guards · regression tests"]
+  H --> I["Security patterns"]
+  I --> J["KB documents"]
+  J --> K["Validate"]
+  K --> L["stats.json"]
+  K --> M["manifest.json"]
+  K --> N["validation_errors.json"]
+  K --> O["data/normalized/*.jsonl<br/>+ data/kb/documents.jsonl"]
 ```
+
+Offline mode uses the same path with fixture payloads via `httpx.MockTransport`
+(URL construction and cache logic still run for real).
 
 ### Trình tự vận hành
 
 1. Nạp `configs/urllib3.yaml` (không chứa secret; token đọc từ `.env` hoặc biến môi trường).
 2. Thu thập các nguồn được bật; lưu body gốc và metadata trong allowlist vào `data/raw/`. Lần
-  crawl live tạo **27 response gốc (~1,7 MB)**. Cache địa chỉ hoá theo SHA-256 cho phép chạy
+   crawl live tạo **27 response gốc (~1,7 MB)**. Cache địa chỉ hoá theo SHA-256 cho phép chạy
    lại bằng `--skip-crawl` mà không gọi mạng.
 3. Chuẩn hoá thành model Pydantic Phase 1; mỗi bản ghi kèm provenance (`source_type`,
-  `source_id`, `raw_sha256`, `retrieved_at`, `extractor_version`).
+   `source_id`, `raw_sha256`, `retrieved_at`, `extractor_version`).
 4. Hợp nhất alias theo thứ tự ưu tiên **GHSA > CVE > OSV/PYSEC**, rồi chiếu khoảng bị ảnh
-  hưởng lên danh mục phiên bản PyPI.
+   hưởng lên danh mục phiên bản PyPI.
 5. Tải commit từ URL vá trong advisory; phân tích diff để rút file, symbol, guard mới và
-  regression test.
+   regression test.
 6. Sinh security pattern và tài liệu KB từ bằng chứng đã thu thập.
 7. Validate và xuất `stats.json`, `manifest.json`, `validation_errors.json`.
 
 Chế độ offline phục vụ payload fixture qua `httpx.MockTransport` nhưng vẫn thực thi logic dựng
 URL và đường đi cache — bảo đảm kiểm chứng pipeline trong CI mà không phụ thuộc mạng.
+
 
 ---
 
