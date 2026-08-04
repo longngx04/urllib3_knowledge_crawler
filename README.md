@@ -6,7 +6,7 @@ pipeline will connect package versions and authoritative advisories to relevant 
 configuration, data-flow conditions, negative conditions, patches, and regression
 tests.
 
-## Current scope (Phases 0–3)
+## Current scope (Phases 0–6)
 
 Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
 configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
@@ -23,10 +23,15 @@ preserved, normalized into PEP 440-sorted version records, semantically validate
 atomically exported as deterministic JSONL. Its usage and aggregation rules are
 documented in [`docs/pypi_versions.md`](docs/pypi_versions.md).
 
-The project still intentionally does **not** implement GitHub/advisory crawling,
-alias/version-range resolution, enrichment, pipeline CLI commands, global statistics,
-or query behavior. Current CLI commands do not contact the network or read credentials;
-default tests exercise all retrieval and PyPI behavior offline with fixtures.
+Phase 4 correlates GitHub releases/tags and changelog entries with the version
+inventory. Phase 5 collects OSV advisories and merges explicitly linked alias clusters.
+Phase 6 resolves advisory ranges against the PyPI inventory into deterministic affected-
+version lists; see [`docs/range_resolution.md`](docs/range_resolution.md).
+
+The project still intentionally does **not** implement patch enrichment, security-
+semantic extraction, NVD, pipeline CLI crawl commands, global `stats.json` export, or
+query behavior. Current CLI commands do not contact the network or read credentials;
+default tests exercise retrieval and source adapters offline with fixtures.
 
 Python 3.11 or newer is required. Phase 0 is verified with Python 3.12.
 
@@ -112,6 +117,7 @@ crawler/
   extractors/    # Raw evidence extraction (later phase)
   normalizers/   # Deterministic source normalization
   resolvers/     # Alias/version/patch resolution (later phase)
+  resolvers/     # Alias clustering and version-range resolution
   validators/    # Semantic validation, currently version inventory
   exporters/     # JSON Schema and version JSONL output
   utils/         # Shared hashing, retrieval, cache, and retry helpers

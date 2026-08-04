@@ -422,16 +422,16 @@ Determine exactly which known `urllib3` releases are affected.
 
 ### Tasks
 
-- [ ] Parse ecosystem-specific ranges.
-- [ ] Support introduced/fixed events.
-- [ ] Support open-ended ranges.
-- [ ] Resolve ranges against the PyPI version inventory.
-- [ ] Preserve raw ranges.
-- [ ] Export resolved affected-version lists.
-- [ ] Verify fixed versions exist.
-- [ ] Detect contradictory source ranges.
-- [ ] Add range-resolution tests.
-- [ ] Produce coverage metrics.
+- [x] Parse ecosystem-specific ranges.
+- [x] Support introduced/fixed events.
+- [x] Support open-ended ranges.
+- [x] Resolve ranges against the PyPI version inventory.
+- [x] Preserve raw ranges.
+- [x] Export resolved affected-version lists.
+- [x] Verify fixed versions exist.
+- [x] Detect contradictory source ranges.
+- [x] Add range-resolution tests.
+- [x] Produce coverage metrics.
 
 ### Required Tests
 
