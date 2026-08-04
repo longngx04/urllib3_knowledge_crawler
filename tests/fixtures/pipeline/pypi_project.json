@@ -1,0 +1,105 @@
+{
+  "info": {
+    "name": "urllib3"
+  },
+  "releases": {
+    "1.26.18": [
+      {
+        "digests": {"sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+        "filename": "urllib3-1.26.18.tar.gz",
+        "packagetype": "sdist",
+        "python_version": "source",
+        "requires_python": ">=3.7",
+        "size": 320000,
+        "upload_time_iso_8601": "2023-10-17T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/aa/urllib3-1.26.18.tar.gz",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.0.0": [
+      {
+        "digests": {"sha256": "1111111111111111111111111111111111111111111111111111111111111111"},
+        "filename": "urllib3-2.0.0-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.7",
+        "size": 120000,
+        "upload_time_iso_8601": "2023-04-26T09:00:00+00:00",
+        "url": "https://files.pythonhosted.org/packages/11/urllib3-2.0.0-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.6.0": [
+      {
+        "digests": {"sha256": "2222222222222222222222222222222222222222222222222222222222222222"},
+        "filename": "urllib3-2.6.0-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.8",
+        "size": 121000,
+        "upload_time_iso_8601": "2024-12-01T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/22/urllib3-2.6.0-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.6.1": [
+      {
+        "digests": {"sha256": "3333333333333333333333333333333333333333333333333333333333333333"},
+        "filename": "urllib3-2.6.1-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.8",
+        "size": 121000,
+        "upload_time_iso_8601": "2024-12-15T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/33/urllib3-2.6.1-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.6.2": [
+      {
+        "digests": {"sha256": "4444444444444444444444444444444444444444444444444444444444444444"},
+        "filename": "urllib3-2.6.2-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.8",
+        "size": 121000,
+        "upload_time_iso_8601": "2025-01-10T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/44/urllib3-2.6.2-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.6.3": [
+      {
+        "digests": {"sha256": "5555555555555555555555555555555555555555555555555555555555555555"},
+        "filename": "urllib3-2.6.3-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.8",
+        "size": 121000,
+        "upload_time_iso_8601": "2025-01-20T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/55/urllib3-2.6.3-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ],
+    "2.7.0": [
+      {
+        "digests": {"sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},
+        "filename": "urllib3-2.7.0-py3-none-any.whl",
+        "packagetype": "bdist_wheel",
+        "python_version": "py3",
+        "requires_python": ">=3.8",
+        "size": 121000,
+        "upload_time_iso_8601": "2024-01-30T10:00:00Z",
+        "url": "https://files.pythonhosted.org/packages/ee/urllib3-2.7.0-py3-none-any.whl",
+        "yanked": false,
+        "yanked_reason": null
+      }
+    ]
+  }
+}

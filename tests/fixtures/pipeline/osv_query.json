@@ -1,0 +1,53 @@
+{
+  "vulns": [
+    {
+      "id": "GHSA-565x-2c8m-578w",
+      "summary": "urllib3 accepts attacker-controlled redirect URLs",
+      "details": "Attacker-controlled redirect Location values such as protocol-relative URLs reach _validate_redirect_url when redirects are followed.",
+      "aliases": [
+        "CVE-2023-45804"
+      ],
+      "modified": "2023-10-18T18:41:48Z",
+      "published": "2023-10-18T17:30:26Z",
+      "database_specific": {
+        "cwe_ids": [
+          "CWE-601"
+        ],
+        "severity": "HIGH"
+      },
+      "references": [
+        {
+          "type": "FIX",
+          "url": "https://github.com/urllib3/urllib3/commit/c3d4e5f6789012345678901234567890abcdef12"
+        }
+      ],
+      "affected": [
+        {
+          "package": {
+            "name": "urllib3",
+            "ecosystem": "PyPI"
+          },
+          "ranges": [
+            {
+              "type": "ECOSYSTEM",
+              "events": [
+                {
+                  "introduced": "2.0.0"
+                },
+                {
+                  "fixed": "2.6.3"
+                }
+              ]
+            }
+          ],
+          "versions": [
+            "2.0.0",
+            "2.6.0",
+            "2.6.1",
+            "2.6.2"
+          ]
+        }
+      ]
+    }
+  ]
+}
