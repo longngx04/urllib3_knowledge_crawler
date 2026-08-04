@@ -124,6 +124,23 @@ class TestMapTagsToVersions:
         with pytest.raises(ReleaseNormalizationError, match="invalid commit SHA"):
             map_tags_to_versions(tags, "test/repo")
 
+    def test_duplicate_normalized_tags_prefer_v_prefix(self) -> None:
+        tags = [
+            {
+                "name": "2.0.5",
+                "commit": {"sha": "a" * 40},
+            },
+            {
+                "name": "v2.0.5",
+                "commit": {"sha": "b" * 40},
+            },
+        ]
+        mappings = map_tags_to_versions(tags, "urllib3/urllib3")
+        assert len(mappings) == 1
+        assert mappings[0].raw_tag == "v2.0.5"
+        assert mappings[0].commit_sha == "b" * 40
+        assert mappings[0].match_type == "v_prefix"
+
     def test_empty_tags(self) -> None:
         mappings = map_tags_to_versions([], "test/repo")
         assert mappings == ()

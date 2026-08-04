@@ -20,7 +20,8 @@ Library APIs remain available for programmatic use (see module docs under `docs/
 
 - CPython 3.11+ (verified on 3.12)
 - Network access only for live crawls (PyPI, GitHub, OSV)
-- Optional: `GITHUB_TOKEN` for higher GitHub API rate limits
+- Optional: `GITHUB_TOKEN` for higher GitHub API rate limits (put it in `.env`;
+  the CLI auto-loads allowlisted keys from that file)
 
 ## 2. Install
 
@@ -56,12 +57,12 @@ Credentials (never commit):
 
 ```bash
 cp .env.example .env
-# edit .env
-export GITHUB_TOKEN=...   # optional
+# edit .env — set GITHUB_TOKEN=... (recommended for live crawls)
 # NVD_API_KEY is reserved for optional later enrichment
 ```
 
-Load secrets via your shell environment. The crawler must not print tokens.
+The CLI auto-loads allowlisted keys from `.env` (`GITHUB_TOKEN`, `NVD_API_KEY`,
+`CRAWLER_OFFLINE`). Shell exports still override `.env`. Never print tokens.
 
 ## 4. Output layout
 
