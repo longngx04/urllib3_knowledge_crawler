@@ -1,6 +1,5 @@
 # urllib3 Security Knowledge Crawl Report
 
-**Đối tượng:** Ban lãnh đạo / kỹ thuật phụ trách SAST  
 **Phiên bản dữ liệu:** crawl live ngày 04/08/2026 (`./data`)  
 **Trạng thái:** pipeline end-to-end đã chạy thành công trên dữ liệu thật
 
