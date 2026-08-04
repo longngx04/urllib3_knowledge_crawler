@@ -66,6 +66,10 @@ Function/—/Access(=none)/Args/Return. The shared column below is "Access/Effec
 | Version JSONL exporter | `crawler.exporters.jsonl.export_version_inventory` | Atomically writes only fixed `versions.jsonl` below a caller-selected non-symlink output directory | Valid `VersionInventory`; `output_directory: Path` | `VersionExportResult(path, sha256, record_count)`; UTF-8 one-record-per-line JSON with canonical keys and PEP 440 order; repeated equivalent input produces identical bytes. |
 | Version-range resolver | `crawler.resolvers.ranges.resolve_advisory_ranges` | Pure; no network or filesystem effects | Sequence of `AdvisoryRecord` plus `VersionInventory` | `RangeResolutionResult(advisories, issues, stats)`; each range keeps `raw`/`events`, gains PEP 440-sorted `resolved`; advisories gain unioned `affected_versions`; invalid/missing-fixed/contradictory/unresolvable cases are reported without inventing fixed releases. |
 | Event/specifier matchers | `version_matches_events`, `version_matches_specifier`, `resolve_version_range` | Pure; no I/O | PEP 440 `Version` plus events or specifier/`VersionRange` and inventory versions | Boolean match or `(resolved_versions, error)`; OSV `0` means beginning; open-ended bounds, prereleases, and disjoint ranges are supported; invalid boundaries return an actionable error. |
+| Semantic extractor | `crawler.extractors.semantics.extract_security_semantics` | Pure after receiving typed records; no network or filesystem effects | `AdvisoryRecord`; optional `PatchRecord`; optional changelog `str` | Frozen `SemanticExtraction` with copied `VersionRange`, modules/symbols/arguments/preconditions/data-flow hints/negative conditions/impact/remediation, assigned `DetectionType`, confidence, SAST usefulness score in `[0,1]`, and patch/test evidence pointers; unsupported gaps recorded in rationale. |
+| Security-pattern normalizer | `crawler.normalizers.patterns.normalize_security_pattern` | Pure; merges advisory and patch provenance | `AdvisoryRecord`; optional `PatchRecord`; optional changelog `str` | Validated `SecurityPatternRecord` with stable record ID, merged provenance, and no invented affected/fixed ranges. |
+| Security-pattern inventory | `crawler.normalizers.patterns.build_security_pattern_inventory` | Pure | `PackageRecord`; sequence of `SecurityPatternRecord` | Frozen `SecurityPatternInventory` sorted by canonical advisory ID; duplicate record IDs raise typed errors. |
+| Security-pattern JSONL exporter | `crawler.exporters.jsonl.export_security_pattern_inventory` | Atomically writes only fixed `security_patterns.jsonl` below a caller-selected non-symlink output directory | Valid `SecurityPatternInventory`; `output_directory: Path` | `JsonlExportResult(path, sha256, record_count)`; UTF-8 one-record-per-line JSON with canonical keys and deterministic ordering; repeated equivalent input produces identical bytes. |
 
 ## Shared shapes (objects used by multiple interfaces)
 
@@ -230,3 +234,7 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR34 → patch normalizer and three offline commit fixtures for detection-class coverage.
 - FR35 → patch normalizer repository verification and `UnresolvedPatchRef` reporting.
 - FR36 → patch JSONL exporter and atomic write safety shared with version export.
+- FR37 → semantic extractor, security-pattern normalizer, and `SecurityPatternRecord` shared shape.
+- FR38 → three offline advisory/patch fixture pairs covering version+API, version+API+configuration, and version+API+data-flow detection classes.
+- FR39 → semantic extractor confidence rationale and version-range copy policy.
+- FR40 → security-pattern JSONL exporter, SAST usefulness scoring, and atomic write safety shared with version export.

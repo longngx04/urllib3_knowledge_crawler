@@ -68,6 +68,9 @@ it; if a pain has no feature, it goes to the "not addressed" list — honestly.
 | P21 | Detection-content engineer | Advisories cite patch commits but the KB lacks changed symbols, guards, or regression-test evidence for SAST verdicts. | Phase 7 checklist in `.agents/implementation_plan.md`. | Inspect upstream diffs manually. | FR33, FR34 | At least three fixture-backed patch records extract files, symbols, guards, and regression tests from official commit payloads. |
 | P22 | Security analyst | Patch evidence could be attributed to the wrong repository or invent fixed releases without tag/advisory proof. | Patch analysis rules in `.agents/context.md` and `.agents/rules.md`. | Cross-check commit URLs and release tags by hand. | FR35 | Repository ownership is enforced, unresolved patch refs are reported, and fixed versions are never invented. |
 | P23 | Pipeline operator | Patch exports could be non-deterministic or bypass the same atomic JSONL safety as version inventory. | Phase 7 export acceptance criteria in `.agents/implementation_plan.md`. | Diff exports between repeated runs. | FR36 | `patches.jsonl` is atomically exported with byte-stable ordering and schema-valid records. |
+| P24 | Detection-content engineer | Advisories and patches exist but no SAST-oriented pattern records tie version, API, preconditions, and negative conditions together. | Phase 8 checklist in `.agents/implementation_plan.md`. | Manually interpret advisories for applicability logic. | FR37, FR38 | At least three fixture-backed security patterns export with distinct detection types and copied version evidence. |
+| P25 | Security analyst | Pattern records could invent affected ranges or hide low-confidence semantic gaps. | Unknown-value rules in `.agents/context.md` and `.agents/rules.md`. | Spot-check ranges and applicability claims by hand. | FR39 | Unsupported inferences are recorded in confidence rationale; ranges copy advisory evidence only. |
+| P26 | Pipeline operator | Security-pattern exports could be non-deterministic or omit SAST usefulness scoring. | Phase 8 export acceptance criteria in `.agents/implementation_plan.md`. | Diff exports and score patterns manually. | FR40 | `security_patterns.jsonl` is atomically exported with byte-stable ordering and documented usefulness scores. |
 
 ### Pains NOT addressed in v1 (deliberate — tie to the scope cut list)
 
@@ -112,6 +115,10 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR34: As a pipeline maintainer, I process three representative vulnerability classes offline, and each yields a provenance-backed patch record suitable for version+API, version+API+configuration, and version+API+data-flow detection needs.
 - FR35: As a security analyst, I review patch normalization output, and commits outside the configured repository or lacking fixed-version evidence remain unresolved rather than inventing releases.
 - FR36: As a crawler operator, I export a patch inventory twice from identical inputs, and `patches.jsonl` is byte-identical, schema-valid, and written atomically like version export.
+- FR37: As a detection-content engineer, I normalize advisory and patch evidence, and I receive SAST-oriented fields including symbols, preconditions, negative conditions, impact, remediation, and a detection type without inventing version ranges.
+- FR38: As a pipeline maintainer, I process three representative vulnerability classes offline, and each yields a provenance-backed security pattern for version+API, version+API+configuration, and version+API+data-flow detection needs.
+- FR39: As a security analyst, I review semantic extraction output, and unsupported inferences are labeled in confidence rationale while affected ranges and fixed versions copy advisory evidence only.
+- FR40: As a crawler operator, I export a security-pattern inventory twice from identical inputs, and `security_patterns.jsonl` is byte-identical, schema-valid, atomically written, and includes a documented SAST usefulness score per record.
 
 ## Non-functional requirements
 

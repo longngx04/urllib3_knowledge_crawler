@@ -1,0 +1,53 @@
+{
+  "id": "CVE-2023-45803",
+  "summary": "urllib3 HTTPResponse.drain_conn leaves pooled connections inconsistent",
+  "details": "Calling HTTPResponse.drain_conn when the internal file pointer is active can leave pooled connections in an inconsistent state before 2.0.7.",
+  "aliases": [
+    "PYSEC-2023-45803"
+  ],
+  "modified": "2023-10-18T18:41:48Z",
+  "published": "2023-10-18T17:30:26Z",
+  "database_specific": {
+    "cwe_ids": [
+      "CWE-400"
+    ],
+    "severity": "HIGH"
+  },
+  "references": [
+    {
+      "type": "FIX",
+      "url": "https://github.com/urllib3/urllib3/commit/a1b2c3d4e5f6789012345678901234567890abcd"
+    }
+  ],
+  "affected": [
+    {
+      "package": {
+        "name": "urllib3",
+        "ecosystem": "PyPI",
+        "purl": "pkg:pypi/urllib3"
+      },
+      "ranges": [
+        {
+          "type": "ECOSYSTEM",
+          "events": [
+            {
+              "introduced": "2.0.0"
+            },
+            {
+              "fixed": "2.0.7"
+            }
+          ]
+        }
+      ],
+      "versions": [
+        "2.0.0",
+        "2.0.1",
+        "2.0.2",
+        "2.0.3",
+        "2.0.4",
+        "2.0.5",
+        "2.0.6"
+      ]
+    }
+  ]
+}

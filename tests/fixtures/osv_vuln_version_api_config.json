@@ -1,0 +1,43 @@
+{
+  "id": "GHSA-q69q-g6gr-6q4p",
+  "summary": "urllib3 permits ssl.CERT_NONE for HTTPS connections",
+  "details": "When create_urllib3_context is called with cert_reqs=ssl.CERT_NONE, TLS certificate verification is disabled for HTTPS connections.",
+  "aliases": [
+    "CVE-2023-45802"
+  ],
+  "modified": "2023-10-17T12:00:00Z",
+  "published": "2023-10-17T10:00:00Z",
+  "database_specific": {
+    "cwe_ids": [
+      "CWE-295"
+    ],
+    "severity": "HIGH"
+  },
+  "references": [
+    {
+      "type": "FIX",
+      "url": "https://github.com/urllib3/urllib3/commit/b2c3d4e5f6789012345678901234567890abcd01"
+    }
+  ],
+  "affected": [
+    {
+      "package": {
+        "name": "urllib3",
+        "ecosystem": "PyPI"
+      },
+      "ranges": [
+        {
+          "type": "ECOSYSTEM",
+          "events": [
+            {
+              "introduced": "0"
+            },
+            {
+              "fixed": "1.26.18"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

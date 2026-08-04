@@ -522,19 +522,19 @@ Convert advisory and patch evidence into SAST-oriented patterns.
 
 ### Tasks
 
-- [ ] Build a rule-based semantic extractor.
-- [ ] Extract vulnerable modules and symbols.
-- [ ] Extract dangerous arguments.
-- [ ] Extract required API sequences.
-- [ ] Extract exploit preconditions.
-- [ ] Extract data-flow requirements.
-- [ ] Extract impact categories.
-- [ ] Extract negative conditions.
-- [ ] Extract remediation.
-- [ ] Assign a detection type.
-- [ ] Calculate confidence.
-- [ ] Calculate SAST usefulness score.
-- [ ] Export `security_patterns.jsonl`.
+- [x] Build a rule-based semantic extractor.
+- [x] Extract vulnerable modules and symbols.
+- [x] Extract dangerous arguments.
+- [x] Extract required API sequences.
+- [x] Extract exploit preconditions.
+- [x] Extract data-flow requirements.
+- [x] Extract impact categories.
+- [x] Extract negative conditions.
+- [x] Extract remediation.
+- [x] Assign a detection type.
+- [x] Calculate confidence.
+- [x] Calculate SAST usefulness score.
+- [x] Export `security_patterns.jsonl`.
 
 ### Extraction Order
 
