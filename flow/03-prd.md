@@ -125,6 +125,10 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR42: As a pipeline maintainer, I process three representative vulnerability classes offline, and each yields multiple provenance-backed KB documents suitable for version, symbol, advisory, and detection-type filtering.
 - FR43: As a crawler operator, I build a KB document inventory with duplicate content, and identical document bodies are skipped while `duplicate_rate` reports skipped duplicates over attempted documents.
 - FR44: As a crawler operator, I export a KB document inventory twice from identical inputs, and `kb/documents.jsonl` is byte-identical, schema-valid, atomically written, and rejects content larger than 32 KiB.
+- FR45: As a pipeline maintainer, I validate a normalized inventory bundle offline, and every record type present is checked against JSON Schema plus version inventory invariants with optional range, alias, duplicate, provenance, and patch/release findings.
+- FR46: As a crawler operator, I run validation in strict mode with failing records, and the library raises an aggregate error listing each `record_id` and reason so callers can exit non-zero.
+- FR47: As a crawler operator, I compute statistics from exported inventory files, and `stats.json` plus `manifest.json` are written atomically with reproducible metric values and SHA-256 digests.
+- FR48: As a pipeline maintainer, I inspect validation failures, and `validation_errors.json` lists machine-readable findings with `record_id`, `check`, and `reason`.
 
 ## Non-functional requirements
 

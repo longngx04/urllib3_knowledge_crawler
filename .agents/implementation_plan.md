@@ -644,18 +644,18 @@ Provide measurable evidence that the crawler works correctly.
 
 ### Tasks
 
-- [ ] Run JSON Schema validation.
-- [ ] Run version validation.
-- [ ] Run range validation.
-- [ ] Run alias validation.
-- [ ] Run duplicate validation.
-- [ ] Run reference validation.
-- [ ] Run provenance validation.
-- [ ] Run patch/release consistency validation.
-- [ ] Calculate quality metrics.
-- [ ] Generate `manifest.json`.
-- [ ] Generate `stats.json`.
-- [ ] Produce a machine-readable error report.
+- [x] Run JSON Schema validation.
+- [x] Run version validation.
+- [x] Run range validation.
+- [x] Run alias validation.
+- [x] Run duplicate validation.
+- [x] Run reference validation.
+- [x] Run provenance validation.
+- [x] Run patch/release consistency validation.
+- [x] Calculate quality metrics.
+- [x] Generate `manifest.json`.
+- [x] Generate `stats.json`.
+- [x] Produce a machine-readable error report.
 - [ ] Produce a concise CLI summary.
 
 ### Required Metrics

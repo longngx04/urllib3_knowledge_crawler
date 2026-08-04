@@ -6,7 +6,7 @@ pipeline will connect package versions and authoritative advisories to relevant 
 configuration, data-flow conditions, negative conditions, patches, and regression
 tests.
 
-## Current scope (Phases 0–9)
+## Current scope (Phases 0–10)
 
 Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
 configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
@@ -32,12 +32,14 @@ enriches advisories with official commit diff evidence and regression-test paths
 security patterns from advisories and patch evidence; see
 [`docs/security_patterns.md`](docs/security_patterns.md). Phase 9 generates
 retrieval-oriented KB documents from security patterns; see
-[`docs/kb_documents.md`](docs/kb_documents.md).
+[`docs/kb_documents.md`](docs/kb_documents.md). Phase 10 validates normalized
+inventories and exports reproducible `stats.json`, `manifest.json`, and
+`validation_errors.json`; see [`docs/validation_stats.md`](docs/validation_stats.md).
 
-The project still intentionally does **not** implement pipeline CLI crawl commands,
-global `stats.json` export, validation orchestration, or query behavior.
-Current CLI commands do not contact the network or read credentials; default tests
-exercise retrieval and source adapters offline with fixtures.
+The project still intentionally does **not** implement pipeline CLI crawl, validate,
+or stats commands, or query behavior. Current CLI commands do not contact the network
+or read credentials; default tests exercise retrieval and source adapters offline with
+fixtures.
 
 Python 3.11 or newer is required. Phase 0 is verified with Python 3.12.
 
@@ -124,8 +126,8 @@ crawler/
   normalizers/   # Deterministic source normalization
   resolvers/     # Alias/version/patch resolution (later phase)
   resolvers/     # Alias clustering and version-range resolution
-  validators/    # Semantic validation, currently version inventory
-  exporters/     # JSON Schema and version JSONL output
+  validators/    # Schema, inventory, and pipeline validation
+  exporters/     # JSON Schema, JSONL, stats, and manifest output
   utils/         # Shared hashing, retrieval, cache, and retry helpers
 schemas/         # Checked-in Phase 1 JSON Schema contracts
 tests/fixtures/  # Offline test inputs

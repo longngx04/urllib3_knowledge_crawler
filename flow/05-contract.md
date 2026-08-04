@@ -70,6 +70,10 @@ Function/—/Access(=none)/Args/Return. The shared column below is "Access/Effec
 | Security-pattern normalizer | `crawler.normalizers.patterns.normalize_security_pattern` | Pure; merges advisory and patch provenance | `AdvisoryRecord`; optional `PatchRecord`; optional changelog `str` | Validated `SecurityPatternRecord` with stable record ID, merged provenance, and no invented affected/fixed ranges. |
 | Security-pattern inventory | `crawler.normalizers.patterns.build_security_pattern_inventory` | Pure | `PackageRecord`; sequence of `SecurityPatternRecord` | Frozen `SecurityPatternInventory` sorted by canonical advisory ID; duplicate record IDs raise typed errors. |
 | Security-pattern JSONL exporter | `crawler.exporters.jsonl.export_security_pattern_inventory` | Atomically writes only fixed `security_patterns.jsonl` below a caller-selected non-symlink output directory | Valid `SecurityPatternInventory`; `output_directory: Path` | `JsonlExportResult(path, sha256, record_count)`; UTF-8 one-record-per-line JSON with canonical keys and deterministic ordering; repeated equivalent input produces identical bytes. |
+| Pipeline validator | `crawler.validators.pipeline.validate_inventory_bundle` | Pure; no network or filesystem effects | `InventoryBundle`; optional `ValidationOptions` | `ValidationResult(findings)`; strict mode raises `PipelineValidationError` with every `record_id` and reason; checks schema, version inventory, provenance, alias/duplicate advisories, optional range issues, references, and soft patch/release consistency. |
+| Validation error exporter | `crawler.validators.pipeline.export_validation_errors` | Atomically writes only `validation_errors.json` below a caller-selected non-symlink output directory | Sequence of `ValidationFinding`; `output_directory: Path` | Written path; JSON object with `error_count` and sorted findings `{record_id, check, reason}`. |
+| Pipeline stats | `crawler.exporters.stats.compute_pipeline_stats` | Pure; no I/O | `InventoryBundle`; optional `ValidationResult` and range/retrieval metrics | Frozen `PipelineStats` with required Phase 10 quality metrics; runtime crawl/cache metrics remain null or zero when not supplied. |
+| Stats/manifest exporters | `export_stats`, `export_manifest`, `sha256_file` | Atomically write `stats.json` and `manifest.json`; digest on-disk files | `PipelineStats` or `{path: sha256}` mapping; `output_directory: Path` | Written paths; canonical sorted JSON with documented `_notes` for unknown runtime metrics. |
 
 ## Shared shapes (objects used by multiple interfaces)
 
@@ -242,3 +246,7 @@ Reference each PRD feature by its `FRn` id so the mapping is machine-checkable
 - FR42 → three offline security-pattern fixture pairs producing multi-document KB inventories.
 - FR43 → KB document inventory deduplication stats (`duplicate_rate`).
 - FR44 → KB document JSONL exporter, 32 KiB content limit, and atomic write to `kb/documents.jsonl`.
+- FR45 → pipeline validator (`validate_inventory_bundle`), JSON Schema helper, version inventory validator reuse, alias/duplicate detectors, and provenance checks.
+- FR46 → `ValidationOptions.strict` and `PipelineValidationError` aggregate failures for non-zero exit mapping.
+- FR47 → `compute_pipeline_stats`, `export_stats`, `export_manifest`, and `sha256_file`.
+- FR48 → `export_validation_errors` writing `validation_errors.json`.
