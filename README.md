@@ -1,7 +1,7 @@
 # urllib3 Knowledge Crawler
 
 `urllib3-knowledge-crawler` is a Python CLI that builds **version-aware, evidence-backed
-security knowledge** about [`urllib3`](https://github.com/urllib3/urllib3) for
+security knowledge** about `[urllib3](https://github.com/urllib3/urllib3)` for
 **AI-assisted SAST**.
 
 It does more than SCA version matching. The pipeline preserves authoritative raw
@@ -9,7 +9,8 @@ sources, resolves exact affected releases, attaches API / configuration / data-f
 conditions, links patch and regression-test evidence, and exports retrieval-ready
 documents with full provenance.
 
-Engineering report: [`reports/urllib3_crawl_report.md`](reports/urllib3_crawl_report.md).
+Engineering report (Vietnamese, based on the verified live crawl):
+[`reports/urllib3_crawl_report.md`](reports/urllib3_crawl_report.md).
 
 ## Why this exists
 
@@ -26,22 +27,24 @@ This crawler turns public urllib3 evidence into that structured knowledge.
 
 ## Current scope (Phases 0–13)
 
-| Phase | Capability | Docs |
-|---|---|---|
-| 0 | Installable CLI bootstrap | this README |
-| 1 | Typed records + JSON Schemas | [`docs/data_contracts.md`](docs/data_contracts.md) |
-| 2 | Secure HTTP / cache / retry | [`docs/retrieval.md`](docs/retrieval.md) |
-| 3 | PyPI version inventory | [`docs/pypi_versions.md`](docs/pypi_versions.md) |
-| 4 | GitHub releases / tags / changelog | (release normalizers) |
-| 5 | OSV advisories + alias merge | [`docs/advisory_collection.md`](docs/advisory_collection.md) |
-| 6 | Affected-range resolution | [`docs/range_resolution.md`](docs/range_resolution.md) |
-| 7 | Patch + regression enrichment | [`docs/patch_enrichment.md`](docs/patch_enrichment.md) |
-| 8 | SAST security patterns | [`docs/security_patterns.md`](docs/security_patterns.md) |
-| 9 | KB documents | [`docs/kb_documents.md`](docs/kb_documents.md) |
-| 10 | Validation + stats/manifest | [`docs/validation_stats.md`](docs/validation_stats.md) |
-| 11 | Full CLI pipeline + query | [`docs/cli.md`](docs/cli.md), [`docs/running.md`](docs/running.md) |
-| 12 | Reproducibility / locks | [`docs/reproducibility.md`](docs/reproducibility.md) |
-| 13 | Report + operator README | [`reports/urllib3_crawl_report.md`](reports/urllib3_crawl_report.md) |
+
+| Phase | Capability                         | Docs                                                                 |
+| ----- | ---------------------------------- | -------------------------------------------------------------------- |
+| 0     | Installable CLI bootstrap          | this README                                                          |
+| 1     | Typed records + JSON Schemas       | `[docs/data_contracts.md](docs/data_contracts.md)`                   |
+| 2     | Secure HTTP / cache / retry        | `[docs/retrieval.md](docs/retrieval.md)`                             |
+| 3     | PyPI version inventory             | `[docs/pypi_versions.md](docs/pypi_versions.md)`                     |
+| 4     | GitHub releases / tags / changelog | (release normalizers)                                                |
+| 5     | OSV advisories + alias merge       | `[docs/advisory_collection.md](docs/advisory_collection.md)`         |
+| 6     | Affected-range resolution          | `[docs/range_resolution.md](docs/range_resolution.md)`               |
+| 7     | Patch + regression enrichment      | `[docs/patch_enrichment.md](docs/patch_enrichment.md)`               |
+| 8     | SAST security patterns             | `[docs/security_patterns.md](docs/security_patterns.md)`             |
+| 9     | KB documents                       | `[docs/kb_documents.md](docs/kb_documents.md)`                       |
+| 10    | Validation + stats/manifest        | `[docs/validation_stats.md](docs/validation_stats.md)`               |
+| 11    | Full CLI pipeline + query          | `[docs/cli.md](docs/cli.md)`, `[docs/running.md](docs/running.md)`   |
+| 12    | Reproducibility / locks            | `[docs/reproducibility.md](docs/reproducibility.md)`                 |
+| 13    | Report + operator README           | `[reports/urllib3_crawl_report.md](reports/urllib3_crawl_report.md)` |
+
 
 Optional NVD enrichment remains out of the default path.
 
@@ -79,7 +82,9 @@ over `.env` values.
 - CPython **3.11+** (verified on **3.12**)
 - Network only for live crawls (PyPI, GitHub, OSV)
 - Optional `GITHUB_TOKEN` for higher GitHub API rate limits (strongly recommended
-  for live runs; unauthenticated GitHub allows only 60 requests/hour)
+for live runs; unauthenticated GitHub allows only 60 requests/hour)
+
+
 
 ## Install
 
@@ -103,9 +108,11 @@ python -m crawler --version
 pytest -q
 ```
 
+
+
 ## Configuration
 
-Package identity and crawl toggles: [`configs/urllib3.yaml`](configs/urllib3.yaml).
+Package identity and crawl toggles: `[configs/urllib3.yaml](configs/urllib3.yaml)`.
 
 ```bash
 cp .env.example .env
@@ -120,7 +127,11 @@ Rules:
 - `NVD_API_KEY` is reserved for optional later enrichment
 - generated trees under `data/` are gitignored (only `.gitkeep` markers are tracked)
 
+
+
 ## How to run (detailed)
+
+
 
 ### A. Offline fixture pipeline (recommended first run)
 
@@ -155,6 +166,8 @@ Outputs:
   stats.json
   manifest.json
 ```
+
+
 
 ### B. Stage-by-stage
 
@@ -219,14 +232,18 @@ Do **not** commit generated `data/` trees (they are gitignored).
 
 ### Troubleshooting
 
-| Symptom | Fix |
-|---|---|
+
+| Symptom                                     | Fix                                                                                                                                                                                                                                                                  |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GITHUB_TOKEN` ignored after editing `.env` | Run from the repo root so `.env` is discovered; or `export GITHUB_TOKEN=...`. Confirm with a non-printing check: `python -c "from crawler.utils.envfile import load_default_env_files; import os; load_default_env_files(); print(bool(os.getenv('GITHUB_TOKEN')))"` |
-| GitHub HTTP 403 / rate limit | Set a PAT in `.env`; wait for reset; reuse `--skip-crawl` / warm `data/raw` |
-| Duplicate tag errors historically | Fixed: tags like `v2.0.5` and `2.0.5` now keep the preferred `v`-prefix tag |
-| OSV `fixed` is a commit SHA | Fixed: commit boundaries go to `patch_commits`, not `fixed_versions` |
-| `data/kb` empty | You only ran Phase-3 version export, or wrote outputs under `/tmp/...`. Use `--output data` and a full `run` |
-| `pytest` wants network | Default tests are offline; do not set `CRAWLER_OFFLINE` incorrectly for unit tests |
+| GitHub HTTP 403 / rate limit                | Set a PAT in `.env`; wait for reset; reuse `--skip-crawl` / warm `data/raw`                                                                                                                                                                                          |
+| Duplicate tag errors historically           | Fixed: tags like `v2.0.5` and `2.0.5` now keep the preferred `v`-prefix tag                                                                                                                                                                                          |
+| OSV `fixed` is a commit SHA                 | Fixed: commit boundaries go to `patch_commits`, not `fixed_versions`                                                                                                                                                                                                 |
+| `data/kb` empty                             | You only ran Phase-3 version export, or wrote outputs under `/tmp/...`. Use `--output data` and a full `run`                                                                                                                                                         |
+| `pytest` wants network                      | Default tests are offline; do not set `CRAWLER_OFFLINE` incorrectly for unit tests                                                                                                                                                                                   |
+
+
+
 
 ## Quality gate
 
@@ -283,10 +300,12 @@ reports/        # crawl / design report
 data/           # local crawl output (gitignored)
 ```
 
+
+
 ## Reproducibility
 
-See [`docs/reproducibility.md`](docs/reproducibility.md) and
-[`requirements.lock`](requirements.lock). Offline double-runs must produce matching
+See `[docs/reproducibility.md](docs/reproducibility.md)` and
+`[requirements.lock](requirements.lock)`. Offline double-runs must produce matching
 normalized JSONL once volatile `retrieved_at` values are excluded; reusing the same
 output directory yields byte-identical exports via the raw cache.
 
@@ -297,3 +316,4 @@ output directory yields byte-identical exports via the raw cache.
 - Never commit `.env`, tokens, or `data/` artifacts
 - Authorization is injected only for `api.github.com`
 - Default tests must not require the network
+
