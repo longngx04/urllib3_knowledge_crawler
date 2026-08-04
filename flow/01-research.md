@@ -3,6 +3,7 @@
 Rule: INSPECT what already exists. Evidence required — links, quotes, screenshots.
 "I think there's nothing like this" without searching = gate fail.
 
+
 > Project type (`/flow project-type`, default `web`): items 2 and 4 below are written for a
 > **web / market-facing product**. For an **internal tool / cli / library / skill** (no public
 > market), use the non-web framing in each item — it is still real evidence (first-party

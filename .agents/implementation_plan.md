@@ -335,18 +335,18 @@ Connect package releases to repository history and release notes.
 
 ### Tasks
 
-- [ ] Fetch GitHub releases.
-- [ ] Fetch Git tags.
-- [ ] Resolve annotated and lightweight tags.
-- [ ] Map tag to commit SHA.
-- [ ] Match PyPI versions to tags.
-- [ ] Fetch changelog candidates.
-- [ ] Detect changelog format.
-- [ ] Parse changelog by version heading.
-- [ ] Classify entries into security, bugfix, feature, deprecation, and documentation.
-- [ ] Extract CVE, GHSA, issue, PR, and commit references.
-- [ ] Export normalized release and changelog records.
-- [ ] Report unresolved version/tag mappings.
+- [x] Fetch GitHub releases.
+- [x] Fetch Git tags.
+- [x] Resolve annotated and lightweight tags.
+- [x] Map tag to commit SHA.
+- [x] Match PyPI versions to tags.
+- [x] Fetch changelog candidates.
+- [x] Detect changelog format.
+- [x] Parse changelog by version heading.
+- [x] Classify entries into security, bugfix, feature, deprecation, and documentation.
+- [x] Extract CVE, GHSA, issue, PR, and commit references.
+- [x] Export normalized release and changelog records.
+- [x] Report unresolved version/tag mappings.
 
 ### Mapping Policy
 
