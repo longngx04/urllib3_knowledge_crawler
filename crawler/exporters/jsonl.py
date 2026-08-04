@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
+from crawler.normalizers.kb_documents import KBDocumentInventory
 from crawler.normalizers.patches import PatchInventory
 from crawler.normalizers.patterns import SecurityPatternInventory
 from crawler.normalizers.versions import VersionInventory
@@ -30,6 +31,10 @@ class PatchExportError(JsonlExportError):
 
 class SecurityPatternExportError(JsonlExportError):
     """Raised when a security-pattern inventory cannot be exported safely."""
+
+
+class KBDocumentExportError(JsonlExportError):
+    """Raised when a KB document inventory cannot be exported safely."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,13 +174,36 @@ def export_security_pattern_inventory(
     )
 
 
+def export_kb_document_inventory(
+    inventory: KBDocumentInventory, output_directory: Path
+) -> JsonlExportResult:
+    """Atomically write KB documents to ``kb/documents.jsonl`` under output root."""
+    payload = _jsonl_bytes_from_records(inventory.records)
+    kb_directory = output_directory / "kb"
+    output_path = _atomic_write_jsonl(
+        payload,
+        kb_directory,
+        "documents.jsonl",
+        ".kb_documents.",
+        "kb_document",
+        KBDocumentExportError,
+    )
+    return JsonlExportResult(
+        path=output_path,
+        sha256=hashlib.sha256(payload).hexdigest(),
+        record_count=len(inventory.records),
+    )
+
+
 __all__ = [
     "JsonlExportError",
     "JsonlExportResult",
+    "KBDocumentExportError",
     "PatchExportError",
     "SecurityPatternExportError",
     "VersionExportError",
     "VersionExportResult",
+    "export_kb_document_inventory",
     "export_patch_inventory",
     "export_security_pattern_inventory",
     "export_version_inventory",

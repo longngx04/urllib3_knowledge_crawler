@@ -71,6 +71,8 @@ it; if a pain has no feature, it goes to the "not addressed" list — honestly.
 | P24 | Detection-content engineer | Advisories and patches exist but no SAST-oriented pattern records tie version, API, preconditions, and negative conditions together. | Phase 8 checklist in `.agents/implementation_plan.md`. | Manually interpret advisories for applicability logic. | FR37, FR38 | At least three fixture-backed security patterns export with distinct detection types and copied version evidence. |
 | P25 | Security analyst | Pattern records could invent affected ranges or hide low-confidence semantic gaps. | Unknown-value rules in `.agents/context.md` and `.agents/rules.md`. | Spot-check ranges and applicability claims by hand. | FR39 | Unsupported inferences are recorded in confidence rationale; ranges copy advisory evidence only. |
 | P26 | Pipeline operator | Security-pattern exports could be non-deterministic or omit SAST usefulness scoring. | Phase 8 export acceptance criteria in `.agents/implementation_plan.md`. | Diff exports and score patterns manually. | FR40 | `security_patterns.jsonl` is atomically exported with byte-stable ordering and documented usefulness scores. |
+| P27 | Retrieval engineer | Security patterns are too structured for chunk retrieval and lack filter metadata per topic. | Phase 9 checklist in `.agents/implementation_plan.md`. | Manually split patterns into RAG chunks. | FR41, FR42 | Each high-value pattern yields multiple schema-valid KB documents with package, version, symbol, and advisory filters. |
+| P28 | Security analyst | KB chunks could repeat identical text or exceed indexer size limits. | Phase 9 deduplication and size rules in `.agents/implementation_plan.md`. | Inspect exports manually. | FR43, FR44 | Duplicate content rate is reported and documents over 32 KiB are rejected before export. |
 
 ### Pains NOT addressed in v1 (deliberate — tie to the scope cut list)
 
@@ -119,6 +121,10 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR38: As a pipeline maintainer, I process three representative vulnerability classes offline, and each yields a provenance-backed security pattern for version+API, version+API+configuration, and version+API+data-flow detection needs.
 - FR39: As a security analyst, I review semantic extraction output, and unsupported inferences are labeled in confidence rationale while affected ranges and fixed versions copy advisory evidence only.
 - FR40: As a crawler operator, I export a security-pattern inventory twice from identical inputs, and `security_patterns.jsonl` is byte-identical, schema-valid, atomically written, and includes a documented SAST usefulness score per record.
+- FR41: As a retrieval engineer, I generate KB documents from security patterns, and each high-value pattern produces one topic-focused document per plan type with structured filter metadata and source-record links.
+- FR42: As a pipeline maintainer, I process three representative vulnerability classes offline, and each yields multiple provenance-backed KB documents suitable for version, symbol, advisory, and detection-type filtering.
+- FR43: As a crawler operator, I build a KB document inventory with duplicate content, and identical document bodies are skipped while `duplicate_rate` reports skipped duplicates over attempted documents.
+- FR44: As a crawler operator, I export a KB document inventory twice from identical inputs, and `kb/documents.jsonl` is byte-identical, schema-valid, atomically written, and rejects content larger than 32 KiB.
 
 ## Non-functional requirements
 
