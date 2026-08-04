@@ -1,0 +1,21 @@
+{
+  "sha": "b2c3d4e5f6789012345678901234567890abcd01",
+  "html_url": "https://github.com/urllib3/urllib3/commit/b2c3d4e5f6789012345678901234567890abcd01",
+  "parents": [
+    {
+      "sha": "0000000000000000000000000000000000000002"
+    }
+  ],
+  "files": [
+    {
+      "filename": "src/urllib3/util/ssl_.py",
+      "status": "modified",
+      "patch": "@@ -210,7 +210,11 @@ def create_urllib3_context(\n     context = SSLContext(ssl_version)\n     context.set_ciphers(DEFAULT_CIPHERS)\n-    if cert_reqs is not None:\n+    if cert_reqs is None:\n+        cert_reqs = ssl.CERT_REQUIRED\n+    if cert_reqs == ssl.CERT_NONE:\n+        raise ValueError(\"CERT_NONE is not permitted for HTTPS connections\")\n+    if cert_reqs is not None:\n         context.verify_mode = cert_reqs\n     return context\n"
+    },
+    {
+      "filename": "test/test_ssl.py",
+      "status": "modified",
+      "patch": "@@ -88,6 +88,14 @@ def test_create_context_honors_cert_reqs():\n     assert context.verify_mode == ssl.CERT_REQUIRED\n+\n+def test_create_context_rejects_cert_none():\n+    with pytest.raises(ValueError, match=\"CERT_NONE\"):\n+        create_urllib3_context(cert_reqs=ssl.CERT_NONE)\n"
+    }
+  ]
+}

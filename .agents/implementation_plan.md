@@ -476,19 +476,19 @@ Prioritize at least three vulnerabilities that demonstrate different detection n
 
 ### Tasks
 
-- [ ] Extract commit references from advisories.
-- [ ] Verify repository ownership.
-- [ ] Fetch commit metadata.
-- [ ] Fetch parent commit.
-- [ ] Store raw diff.
-- [ ] Extract changed files.
-- [ ] Extract changed symbols.
-- [ ] Identify added guards or limits.
-- [ ] Find related regression tests.
-- [ ] Map patch commit to release tags.
-- [ ] Verify fixed-release claims.
-- [ ] Export `patches.jsonl`.
-- [ ] Record unresolved patch references.
+- [x] Extract commit references from advisories.
+- [x] Verify repository ownership.
+- [x] Fetch commit metadata.
+- [x] Fetch parent commit.
+- [x] Store raw diff.
+- [x] Extract changed files.
+- [x] Extract changed symbols.
+- [x] Identify added guards or limits.
+- [x] Find related regression tests.
+- [x] Map patch commit to release tags.
+- [x] Verify fixed-release claims.
+- [x] Export `patches.jsonl`.
+- [x] Record unresolved patch references.
 
 ### Manual Review Checkpoint
 

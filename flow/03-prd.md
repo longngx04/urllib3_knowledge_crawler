@@ -65,6 +65,9 @@ it; if a pain has no feature, it goes to the "not addressed" list — honestly.
 | P18 | Detection-content engineer | Advisory records still carry opaque range events or specifier strings instead of exact urllib3 releases. | Phase 6 checklist in `.agents/implementation_plan.md`. | Manually compare ranges to PyPI versions. | FR29, FR30 | Every resolvable advisory yields a deterministic PEP 440 affected-version list while preserving raw ranges. |
 | P19 | Security analyst | Missing or invented fixed versions and contradictory range claims can silently corrupt applicability verdicts. | Unknown-value and conflict rules in `.agents/context.md` and `.agents/rules.md`. | Spot-check fixed releases by hand. | FR31 | Missing fixed versions and contradictory overlaps are reported; fixed releases are never invented. |
 | P20 | Pipeline operator | Range-resolution completeness is invisible when some advisories fail to resolve. | Phase 6 coverage/metrics acceptance criteria in `.agents/implementation_plan.md`. | Count failures after export. | FR32 | Coverage metrics and typed invalid/unresolvable issue reports are available from the resolution result. |
+| P21 | Detection-content engineer | Advisories cite patch commits but the KB lacks changed symbols, guards, or regression-test evidence for SAST verdicts. | Phase 7 checklist in `.agents/implementation_plan.md`. | Inspect upstream diffs manually. | FR33, FR34 | At least three fixture-backed patch records extract files, symbols, guards, and regression tests from official commit payloads. |
+| P22 | Security analyst | Patch evidence could be attributed to the wrong repository or invent fixed releases without tag/advisory proof. | Patch analysis rules in `.agents/context.md` and `.agents/rules.md`. | Cross-check commit URLs and release tags by hand. | FR35 | Repository ownership is enforced, unresolved patch refs are reported, and fixed versions are never invented. |
+| P23 | Pipeline operator | Patch exports could be non-deterministic or bypass the same atomic JSONL safety as version inventory. | Phase 7 export acceptance criteria in `.agents/implementation_plan.md`. | Diff exports between repeated runs. | FR36 | `patches.jsonl` is atomically exported with byte-stable ordering and schema-valid records. |
 
 ### Pains NOT addressed in v1 (deliberate — tie to the scope cut list)
 
@@ -105,6 +108,10 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR30: As a pipeline maintainer, I inspect a resolved advisory, and raw range evidence plus ordered events remain intact while `affected_versions` unions explicit source versions with inventory matches.
 - FR31: As a security analyst, I review fixed-version claims, and missing inventory matches or overlaps between fixed and affected sets are reported without inventing fixed releases.
 - FR32: As a crawler operator, I inspect range-resolution stats and issues, and I receive coverage counts for resolvable/unresolvable advisories plus typed invalid, missing-fixed, and contradictory reports.
+- FR33: As a detection-content engineer, I normalize an official GitHub commit payload, and I receive changed files, Python symbols, added guards, and linked regression-test paths extracted from unified diffs.
+- FR34: As a pipeline maintainer, I process three representative vulnerability classes offline, and each yields a provenance-backed patch record suitable for version+API, version+API+configuration, and version+API+data-flow detection needs.
+- FR35: As a security analyst, I review patch normalization output, and commits outside the configured repository or lacking fixed-version evidence remain unresolved rather than inventing releases.
+- FR36: As a crawler operator, I export a patch inventory twice from identical inputs, and `patches.jsonl` is byte-identical, schema-valid, and written atomically like version export.
 
 ## Non-functional requirements
 

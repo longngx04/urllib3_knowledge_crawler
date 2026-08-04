@@ -8,12 +8,22 @@ from crawler.utils.http import RetrievalClient, RetrievedResponse
 
 _OWNER_REPO_PATTERN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9])?$")
 _REF_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]{0,254}$")
+_COMMIT_SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$|^[0-9a-f]{64}$")
 _GITHUB_API_BASE = "https://api.github.com"
 _GITHUB_RAW_BASE = "https://raw.githubusercontent.com"
 
 
 class GitHubClientError(RuntimeError):
     """Raised when a GitHub resource cannot be safely retrieved."""
+
+
+def _validate_commit_sha(sha: str) -> str:
+    if not isinstance(sha, str):
+        raise GitHubClientError(f"invalid commit SHA: {sha!r}")
+    normalized = sha.strip().lower()
+    if not _COMMIT_SHA_PATTERN.fullmatch(normalized):
+        raise GitHubClientError(f"invalid commit SHA: {sha!r}")
+    return normalized
 
 
 def _validate_owner_repo(owner: str, repo: str) -> None:
@@ -63,6 +73,20 @@ class GitHubClient:
             headers={"Accept": "application/vnd.github+json"},
         )
         return _validate_json_response(response, f"{owner}/{repo} tags")
+
+    def fetch_commit(self, owner: str, repo: str, sha: str) -> RetrievedResponse:
+        """Fetch commit metadata and file patches for a repository commit."""
+        _validate_owner_repo(owner, repo)
+        normalized_sha = _validate_commit_sha(sha)
+        url = f"{_GITHUB_API_BASE}/repos/{owner}/{repo}/commits/{normalized_sha}"
+        response = self._retrieval_client.fetch(
+            "GET",
+            url,
+            headers={"Accept": "application/vnd.github+json"},
+        )
+        return _validate_json_response(
+            response, f"{owner}/{repo} commit {normalized_sha}"
+        )
 
     def fetch_file(
         self, owner: str, repo: str, path: str, ref: str = "main"
