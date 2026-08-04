@@ -17,6 +17,9 @@ VinSOC is starting an internal Python CLI that will convert authoritative urllib
 Phase 1 adds the shared data-contract layer only. It does not contact remote sources,
 resolve advisory aliases or version ranges, or claim any real urllib3 vulnerability fact.
 
+Phase 2 adds reusable retrieval infrastructure. It is exercised only with offline mock
+transports in default tests and does not yet implement a PyPI, GitHub, OSV, or NVD crawler.
+
 ## Target users
 
 - VinSOC AppSec/SAST analysts who need evidence-backed applicability verdicts.
@@ -42,6 +45,9 @@ it; if a pain has no feature, it goes to the "not addressed" list — honestly.
 | P9 | Non-Python consumer | There is no language-neutral validation artifact for normalized records. | Phase 1 JSON Schema acceptance criteria in `.agents/implementation_plan.md`. | Reimplement Pydantic assumptions in each consumer. | FR9 | Every example serializes to JSON and validates against its checked-in matching schema. |
 | P10 | Pipeline maintainer | Reprocessing identical evidence can create unstable identifiers or list ordering. | Determinism requirements in `.agents/context.md`. | Ad-hoc hashes and source-order preservation. | FR10, FR11 | Identical identity inputs yield identical IDs and set-like fields serialize in deterministic order. |
 | P11 | Security analyst | Missing source facts can be silently replaced by guessed defaults, obscuring evidence quality. | Unknown-value and provenance requirements in `.agents/context.md`. | Read raw sources manually to distinguish facts from assumptions. | FR11, FR12 | Unknown optional facts remain null, empty collections remain empty, and every top-level record carries source provenance. |
+| P12 | Source-adapter maintainer | Each future connector could implement different timeout, retry, and error behavior. | Phase 2 checklist and crawl engineering requirements in `.agents/implementation_plan.md` and `.agents/context.md`. | Duplicate ad-hoc HTTP calls. | FR13, FR14 | One configured client classifies failures and retries only approved transient conditions. |
+| P13 | Pipeline operator | A repeated crawl currently cannot reuse preserved bytes or run offline. | Cache/idempotency requirements in `.agents/context.md`. | Contact the provider again. | FR15 | The second identical request is served from verified local raw storage without transport access. |
+| P14 | Repository owner | Tokens, authorization headers, cookies, or unbounded bodies could leak into files/logs or exhaust disk/memory. | Security rules in `.agents/rules.md`. | Manual review after every request. | FR16 | Sensitive headers/query credentials are rejected or scoped, persisted headers are allowlisted, and oversized bodies fail before storage. |
 
 ### Pains NOT addressed in v1 (deliberate — tie to the scope cut list)
 
@@ -70,6 +76,10 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR10: As a pipeline maintainer, I derive a record ID from a record type and explicit identity data, and identical semantic input produces an identical SHA-256-based identifier regardless of mapping/set ordering.
 - FR11: As a downstream consumer, I serialize records and receive UTF-8-compatible JSON values, timezone-aware ISO-8601 timestamps, explicit nulls for unknown scalar facts, empty arrays for known-empty collections, and deterministic ordering for set-like lists without altering ordered event/API sequences.
 - FR12: As a maintainer, I read the data-contract decision document and see the canonical advisory-ID policy, date format, null/empty rules, ordering, version-range representation, provenance structure, and schema-versioning policy before source adapters are implemented.
+- FR13: As a source-adapter maintainer, I load typed crawl settings and fetch an HTTPS resource through one synchronous HTTPX client with explicit timeout, maximum response size, deterministic request identity, and actionable typed errors.
+- FR14: As an operator, I encounter a timeout, connection reset, HTTP 429/500/502/503/504, or GitHub rate-limit response, and the client performs only bounded exponential retries while respecting valid bounded `Retry-After` or reset delays.
+- FR15: As a pipeline maintainer, I repeat an identical method/normalized-URL/body request, and the client returns the SHA-256-verified cached bytes plus raw request/response metadata without a network call while logging cache hit/miss state.
+- FR16: As a security engineer, I provide `GITHUB_TOKEN` through the environment, and it is sent only as an authorization header to `api.github.com`; credentials, cookies, authorization headers, and response bodies never appear in cache metadata or logs, and unsafe URLs/headers/oversized responses are rejected.
 
 ## Non-functional requirements
 
@@ -81,16 +91,20 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - Generate record IDs locally with SHA-256 over canonical JSON; never include credentials or unbounded source bodies in identity input.
 - Reject timezone-naive timestamps, malformed SHA-256 digests, and unknown fields.
 - Keep schema generation deterministic and make tests fail when checked-in schemas drift from model definitions.
+- Permit HTTPS only, reject userinfo and credential-like query parameters, and never follow redirects implicitly in the shared retrieval layer.
+- Bound retries, retry delays, configuration size, response bytes, and persisted metadata; verify cached body hashes on every read.
+- Keep clocks, sleepers, and HTTP transports injectable so default tests remain offline and deterministic.
 
 ## Tech stack
 
-- Runtime: Python `>=3.11`, Typer and Rich for the CLI; HTTPX, Pydantic, Packaging, PyYAML, Tenacity, and JSON Schema declared for the planned P0/P1 foundation.
+- Runtime: Python `>=3.11`, Typer/Rich for the CLI, HTTPX for bounded synchronous retrieval, Pydantic/PyYAML for typed configuration, and existing Packaging/JSON Schema support. The retry loop is explicit so provider delays and injected clocks are testable.
 - Development: pytest, pytest-cov, respx, Ruff, and Mypy.
 - Packaging: PEP 517/621 `pyproject.toml` with an editable install and a `crawler` package; no database, frontend, or deployment target in Phase 0.
 - Configuration: YAML package config and environment-variable names for credentials; no `.env` loading or remote client behavior yet.
 
 ## Success metric (numbers only)
 
-2 Phase 0 acceptance commands continue to return exit code 0; 6 Phase 1 model
-families serialize and validate against 6 matching checked-in schemas; 100% of tests
-pass; and identical identity input produces 1 identical record ID across repeated calls.
+2 Phase 0 acceptance commands continue to return exit code 0; 6 Phase 1 model families
+retain schema agreement; 1 repeated Phase 2 request produces exactly 1 transport call;
+all approved transient paths have bounded retry tests; 100% of tests pass; and 0 secret
+values occur in persisted metadata or captured logs.

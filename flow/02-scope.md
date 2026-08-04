@@ -46,8 +46,9 @@ When a C feature is the real need, three honest paths:
 
 ## Time budget
 
-One focused implementation session per approved phase. Phase 0 is complete; this
-amendment authorizes one focused implementation session for Phase 1 data contracts.
+One focused implementation session per approved phase. Phases 0–1 are complete; this
+amendment authorizes one focused implementation session for Phase 2 retrieval
+infrastructure.
 
 ## Features in v1 (each with impact AND grade)
 
@@ -62,6 +63,10 @@ amendment authorizes one focused implementation session for Phase 1 data contrac
 - Checked-in Draft 2020-12 JSON Schemas generated from the typed records — impact H (Python and non-Python consumers must validate the same wire format) — grade B (schema generation plus drift tests).
 - Deterministic record identifiers and set-like list normalization — impact H (incremental crawls need stable deduplication and reproducible output) — grade A (canonical JSON hashing and validators).
 - Data-contract decision document covering identifiers, dates, nulls, ordering, version ranges, provenance, and schema versioning — impact M (prevents later source adapters from inventing incompatible conventions) — grade A (bounded architecture documentation).
+- Configurable HTTPS retrieval client with bounded streaming, actionable failures, and scoped GitHub authentication — impact H (every authoritative source adapter needs one safe network boundary) — grade B (security-sensitive HTTP behavior).
+- Bounded retry policy for documented transient statuses, timeouts, `Retry-After`, and GitHub rate-limit reset headers — impact H (reliable crawls must recover without hammering providers) — grade B (clock/sleep policy and failure classification).
+- Deterministic filesystem cache/raw store with atomic body/metadata writes and SHA-256 verification — impact H (offline reprocessing and provenance depend on preserved, untampered source bytes) — grade B (durable storage plus corruption detection).
+- Cache hit/miss/retry logging that excludes credentials and response bodies — impact M (operators need retrieval diagnostics without secret leakage) — grade A (structured standard-library logging).
 
 ## Suggested features (impact-first — proposed, not decided)
 
@@ -78,13 +83,12 @@ decision.
 ## Cut list (NOT in v1 — deferred, not deleted)
 
 - Domain models and JSON Schemas were deferred from Phase 0 and are now included in the approved Phase 1 amendment.
-- HTTP, cache, retry, and raw storage — deferred to Phase 2.
+- HTTP, cache, retry, and raw storage were deferred from earlier phases and are now included in the approved Phase 2 amendment.
 - Live PyPI, GitHub, OSV, GHSA, and NVD crawling — deferred to Phases 3–5.
 - Range and alias resolution, patch/test enrichment, security patterns, KB documents, statistics, and real query behavior — deferred to Phases 6–13.
 - CI, containerization, deployment, dashboard, vector database, multi-package support, and LLM enrichment — deferred until a validated vertical slice justifies them.
 
 ## Decision
 
-GO — Phase 0 established the install and repository seams. Phase 1 is a bounded
-contract-first extension that stabilizes deterministic record shapes before any source
-adapter or crawler behavior is implemented.
+GO — Phases 0–1 established the package and data contracts. Phase 2 adds one reusable,
+security-bounded retrieval seam before any source-specific crawler is implemented.
