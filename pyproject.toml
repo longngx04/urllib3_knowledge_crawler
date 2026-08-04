@@ -40,6 +40,9 @@ crawler = ["py.typed"]
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers -ra"
 testpaths = ["tests"]
+markers = [
+  "slow: isolated venv editable-install smoke (deselect with -m 'not slow')",
+]
 
 [tool.ruff]
 target-version = "py311"

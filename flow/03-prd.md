@@ -129,6 +129,11 @@ interface in the contract (`FRn →`); `/flow consistency` checks this mechanica
 - FR46: As a crawler operator, I run validation in strict mode with failing records, and the library raises an aggregate error listing each `record_id` and reason so callers can exit non-zero.
 - FR47: As a crawler operator, I compute statistics from exported inventory files, and `stats.json` plus `manifest.json` are written atomically with reproducible metric values and SHA-256 digests.
 - FR48: As a pipeline maintainer, I inspect validation failures, and `validation_errors.json` lists machine-readable findings with `record_id`, `check`, and `reason`.
+- FR49: As a crawler operator, I run the full pipeline through one CLI command with offline fixture support, and each stage completes with configurable output paths and evidence-backed query results.
+- FR50: As a maintainer, I inspect pipeline CLI commands, and every stage exposes `--help` with clear errors and non-zero exit codes for validation failures.
+- FR51: As a crawler operator, I run the offline fixture pipeline twice in one output directory, and normalized JSONL exports are byte-identical because cached raw responses preserve provenance timestamps.
+- FR52: As a reviewer, I rerun the offline fixture pipeline in fresh output directories, and normalized inventories match once volatile `retrieved_at` provenance fields are excluded from content hashes.
+- FR53: As a maintainer, I follow reproducibility documentation and locked dependencies, and default offline tests pass without network access while optional slow install smoke verifies package metadata.
 
 ## Non-functional requirements
 

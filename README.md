@@ -6,7 +6,7 @@ pipeline will connect package versions and authoritative advisories to relevant 
 configuration, data-flow conditions, negative conditions, patches, and regression
 tests.
 
-## Current scope (Phases 0–11)
+## Current scope (Phases 0–12)
 
 Phase 0 provides an installable typed package, discoverable CLI seam, package-specific
 configuration, repository boundaries, offline tests, and local quality tooling. Phase 1
@@ -36,10 +36,27 @@ retrieval-oriented KB documents from security patterns; see
 inventories and exports reproducible `stats.json`, `manifest.json`, and
 `validation_errors.json`; see [`docs/validation_stats.md`](docs/validation_stats.md).
 Phase 11 wires the full pipeline and query demo through the CLI; see
-[`docs/cli.md`](docs/cli.md) and [`docs/running.md`](docs/running.md).
+[`docs/cli.md`](docs/cli.md) and [`docs/running.md`](docs/running.md). Phase 12 adds
+deterministic fixture tests, dependency locking, and reproducibility documentation; see
+[`docs/reproducibility.md`](docs/reproducibility.md).
 
 Default tests remain offline. Live network access is required only for operator crawls
 without `--offline` / fixture mode.
+
+## Reproducibility
+
+Phase 12 locks development dependencies in [`requirements.lock`](requirements.lock)
+and documents exact offline verification commands in
+[`docs/reproducibility.md`](docs/reproducibility.md). Run the deterministic fixture
+test module directly:
+
+```bash
+pytest tests/test_deterministic_pipeline.py
+```
+
+Fresh output directories produce semantically identical normalized JSONL once volatile
+`retrieved_at` provenance timestamps are excluded; reusing the same `--output` path
+yields byte-identical exports via the verified raw cache.
 
 Python 3.11 or newer is required. Phase 0 is verified with Python 3.12.
 

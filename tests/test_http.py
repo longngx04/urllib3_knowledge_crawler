@@ -8,7 +8,11 @@ import httpx
 import pytest
 
 from crawler.config import HttpClientConfig
-from crawler.utils.cache import RawResponseStore, UnsafeRequestError
+from crawler.utils.cache import (
+    CacheCorruptionError,
+    RawResponseStore,
+    UnsafeRequestError,
+)
 from crawler.utils.http import (
     RateLimitError,
     ResponseTooLargeError,
@@ -381,6 +385,35 @@ def test_cache_disabled_contacts_transport_every_time(tmp_path: Path) -> None:
     assert calls == 2
     assert first.from_cache is second.from_cache is False
     assert not any(path.is_file() for path in store.root.rglob("*"))
+
+
+def test_corrupted_cache_body_raises_before_transport(tmp_path: Path) -> None:
+    store = RawResponseStore(tmp_path / "raw")
+
+    def first_handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, content=b"cached-payload", request=request)
+
+    with RetrievalClient(
+        config=_config(),
+        store=store,
+        transport=httpx.MockTransport(first_handler),
+    ) as client:
+        client.fetch("GET", "https://example.com/data")
+
+    next((tmp_path / "raw").rglob("*.body")).write_bytes(b"cached-payloaX")
+
+    def fail_handler(request: httpx.Request) -> httpx.Response:
+        raise AssertionError(f"unexpected transport call: {request.url.host}")
+
+    with (
+        RetrievalClient(
+            config=_config(),
+            store=store,
+            transport=httpx.MockTransport(fail_handler),
+        ) as client,
+        pytest.raises(CacheCorruptionError, match="SHA-256 mismatch"),
+    ):
+        client.fetch("GET", "https://example.com/data")
 
 
 def test_oversized_cached_response_is_rejected_before_transport(tmp_path: Path) -> None:
