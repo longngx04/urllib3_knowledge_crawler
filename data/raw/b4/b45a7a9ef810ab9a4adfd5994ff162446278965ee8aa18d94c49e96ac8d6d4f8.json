@@ -1,0 +1,25 @@
+{
+  "request": {
+    "body_sha256": null,
+    "method": "GET",
+    "url": "https://api.github.com/repos/urllib3/urllib3/commits/8d65ea1ecf6e2cdc27d42124e587c1b83a3118b0"
+  },
+  "response": {
+    "body_sha256": "ea506893131faca6d45e45340a841066e9d51b4fd1aa5d1f0a056a3fa21612b0",
+    "body_size": 8729,
+    "content_type": "application/json; charset=utf-8",
+    "headers": {
+      "cache-control": "private, max-age=60, s-maxage=60",
+      "content-type": "application/json; charset=utf-8",
+      "date": "Tue, 04 Aug 2026 16:05:24 GMT",
+      "etag": "W/\"05ff6b9794f9bd66839e0890e47e5d68538da24b3d3c9aa83a12356e010120ea\"",
+      "last-modified": "Mon, 15 Mar 2021 13:49:49 GMT",
+      "x-ratelimit-limit": "5000",
+      "x-ratelimit-remaining": "4992",
+      "x-ratelimit-reset": "1785859645",
+      "x-ratelimit-resource": "core"
+    },
+    "retrieved_at": "2026-08-04T16:05:24.284245Z",
+    "status_code": 200
+  }
+}

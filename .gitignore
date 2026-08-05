@@ -48,10 +48,8 @@ Thumbs.db
 *.temp
 tmp/
 
-# Raw HTTP cache stays local (regenerable; large). Normalized KB outputs are
-# committed so reviewers can inspect / query without re-running a live crawl.
-data/raw/**
-!data/raw/.gitkeep
+# Live crawl artifacts under data/ are committed so reviewers can inspect and
+# query without re-running the crawl. Keep .env secrets out of git separately.
 
 # /flow run-state (generated; safe to ignore)
 MODE
