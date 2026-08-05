@@ -1,0 +1,32 @@
+{
+  "files": [
+    {
+      "path": "kb/documents.jsonl",
+      "sha256": "9cd90cdeedba03414412d3558931346c9fd63b15450301f1c9d55d5faa573cdd"
+    },
+    {
+      "path": "normalized/advisories.jsonl",
+      "sha256": "a45d9fbeea997a7abc7abe361e1cdb5ed68f8c8949011da726c33f217da8ad18"
+    },
+    {
+      "path": "normalized/patches.jsonl",
+      "sha256": "d138f237f6700dd7662ec0afa2cee0d2050bc2a00a06a10e01900bb125ad452b"
+    },
+    {
+      "path": "normalized/security_patterns.jsonl",
+      "sha256": "0b68c1b04dd2398acf5108a3d037ee48e351c202c332c63d51df280c369d4519"
+    },
+    {
+      "path": "normalized/versions.jsonl",
+      "sha256": "7ccd556d161f54cdcda005c4c02fd9f5cbfa1bfcbc96d0d60c1f122067d220c1"
+    },
+    {
+      "path": "stats.json",
+      "sha256": "6ba07a4ea082d6f64fac6bb4629883e18721aa9387a80895db641fd0f416b535"
+    },
+    {
+      "path": "validation_errors.json",
+      "sha256": "4fb83bafb8e8f8a12aa87f056a6c1c0e5a7312571059180d9176e5b4af713e53"
+    }
+  ]
+}

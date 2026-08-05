@@ -48,16 +48,10 @@ Thumbs.db
 *.temp
 tmp/
 
-# Generated crawler output. Keep explicit directory markers versioned.
+# Raw HTTP cache stays local (regenerable; large). Normalized KB outputs are
+# committed so reviewers can inspect / query without re-running a live crawl.
 data/raw/**
-data/normalized/**
-data/kb/**
-data/manifest.json
-data/stats.json
-data/validation_errors.json
 !data/raw/.gitkeep
-!data/normalized/.gitkeep
-!data/kb/.gitkeep
 
 # /flow run-state (generated; safe to ignore)
 MODE
