@@ -125,7 +125,10 @@ Rules:
 - secrets only in environment / ignored `.env` (never commit `.env`)
 - never log, cache, or persist authorization headers
 - `NVD_API_KEY` is reserved for optional later enrichment
-- generated trees under `data/` are gitignored (only `.gitkeep` markers are tracked)
+- `data/raw/` (HTTP cache) stays gitignored; a verified live snapshot of
+  `data/normalized/`, `data/kb/`, `stats.json`, `manifest.json`, and
+  `validation_errors.json` is committed so mentors can inspect/query without
+  re-crawling
 
 
 
@@ -228,7 +231,9 @@ Re-run with cache hits (no new network if raw cache is warm):
 python -m crawler run --config configs/urllib3.yaml --output data --skip-crawl
 ```
 
-Do **not** commit generated `data/` trees (they are gitignored).
+A verified live snapshot under `data/normalized/`, `data/kb/`, plus
+`stats.json` / `manifest.json` / `validation_errors.json`, is committed for
+review. Keep `data/raw/` local only (HTTP cache; gitignored).
 
 ### Troubleshooting
 
@@ -297,7 +302,7 @@ schemas/        # Draft 2020-12 contracts
 tests/fixtures/ # offline payloads (incl. pipeline/)
 docs/           # phase contracts and operator guides
 reports/        # crawl / design report
-data/           # local crawl output (gitignored)
+data/           # live KB snapshot (normalized/kb/stats); raw/ is local cache only
 ```
 
 

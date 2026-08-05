@@ -1,0 +1,40 @@
+{
+  "error_count": 7,
+  "findings": [
+    {
+      "check": "range",
+      "reason": "contradictory_ranges: advisory fixed versions overlap resolved affected versions: 1.26.4",
+      "record_id": "advisory:5e04543213332a9f92afea95d10c7304a56abc30808421aacc5f9e24d976f6dc"
+    },
+    {
+      "check": "range",
+      "reason": "contradictory_ranges: advisory fixed versions overlap resolved affected versions: 1.26.18, 2.0.7",
+      "record_id": "advisory:945501bb7fd5d659760e447d9e3cdb895e834e3103d8cdee8566043e56c2f885"
+    },
+    {
+      "check": "range",
+      "reason": "contradictory_ranges: advisory fixed versions overlap resolved affected versions: 1.24.2",
+      "record_id": "advisory:cfabd704a7834a3bba342b6114edbef80735f8fa14b5af0200c53e7e792d6cab"
+    },
+    {
+      "check": "range",
+      "reason": "contradictory_ranges: advisory fixed versions overlap resolved affected versions: 1.25.8",
+      "record_id": "advisory:79d78cec5d4f66d66f3054e57d2ef1291401a4791f95f03183ef1d0128109dd5"
+    },
+    {
+      "check": "range",
+      "reason": "contradictory_ranges: advisory fixed versions overlap resolved affected versions: 1.26.5",
+      "record_id": "advisory:a466740da7ff2df6b0faf9ce07e23db7a07c2d1c49b6ba8a9037ebdfeb226500"
+    },
+    {
+      "check": "range",
+      "reason": "contradictory_ranges: advisory fixed versions overlap resolved affected versions: 1.26.17, 2.0.6",
+      "record_id": "advisory:4e600c20e5a6eeda88791d7ed35e934ad79a3f99eaa20b24d4f8ebfcc082e14a"
+    },
+    {
+      "check": "range",
+      "reason": "contradictory_ranges: advisory fixed versions overlap resolved affected versions: 1.25.9",
+      "record_id": "advisory:ac0d7850a9d22f5c1137dcd568ea8fc2144e93f502ab095e43f519be05754284"
+    }
+  ]
+}
