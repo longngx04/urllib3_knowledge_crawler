@@ -1,0 +1,20 @@
+{
+  "request": {
+    "body_sha256": null,
+    "method": "GET",
+    "url": "https://pypi.org/pypi/urllib3/json"
+  },
+  "response": {
+    "body_sha256": "9dd6118e8e32259fb3e012ae5facda8dc0a3cace92519363bd10d97457c58b00",
+    "body_size": 158766,
+    "content_type": "application/json",
+    "headers": {
+      "cache-control": "max-age=900, public",
+      "content-type": "application/json",
+      "date": "Tue, 04 Aug 2026 16:02:52 GMT",
+      "etag": "\"CShR/WE78W3vJyV+aFD7/w\""
+    },
+    "retrieved_at": "2026-08-04T16:02:52.916491Z",
+    "status_code": 200
+  }
+}

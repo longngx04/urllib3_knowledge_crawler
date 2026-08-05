@@ -1,0 +1,21 @@
+{
+  "request": {
+    "body_sha256": null,
+    "method": "GET",
+    "url": "https://raw.githubusercontent.com/urllib3/urllib3/main/CHANGES.rst"
+  },
+  "response": {
+    "body_sha256": "4e33708e68afebeac219bcc4d3227b174b64e708bee90e543a53abc8824974a6",
+    "body_size": 79043,
+    "content_type": "text/plain; charset=utf-8",
+    "headers": {
+      "cache-control": "max-age=300",
+      "content-type": "text/plain; charset=utf-8",
+      "date": "Tue, 04 Aug 2026 16:02:55 GMT",
+      "etag": "W/\"e37521b294a2f02df363650d0b6a9ff98db966f086b6393bc79f15559506eea5\"",
+      "expires": "Tue, 04 Aug 2026 16:07:55 GMT"
+    },
+    "retrieved_at": "2026-08-04T16:02:55.307087Z",
+    "status_code": 200
+  }
+}

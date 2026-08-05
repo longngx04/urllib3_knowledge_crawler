@@ -1,0 +1,18 @@
+{
+  "request": {
+    "body_sha256": "ad1f021b3c2cb75b2bcbcd76ca486c22aad2a817261ff2d46e7bf68a7709214a",
+    "method": "POST",
+    "url": "https://api.osv.dev/v1/query"
+  },
+  "response": {
+    "body_sha256": "e6bf62d246f18ee614b00da958f4701e6dc9d23d3b4062fa40cf09cbfed00219",
+    "body_size": 111035,
+    "content_type": "application/json",
+    "headers": {
+      "content-type": "application/json",
+      "date": "Tue, 04 Aug 2026 16:02:55 GMT"
+    },
+    "retrieved_at": "2026-08-04T16:02:56.151415Z",
+    "status_code": 200
+  }
+}
